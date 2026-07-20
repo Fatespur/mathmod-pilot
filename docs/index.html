@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMod-Pilot — Agent-Native Skill Library for Mathematical Modelling</title>
+    <meta name="description" content="An Agent-Native skill library for mathematical modelling competitions (CUMCM/MCM), covering the full pipeline from problem analysis to paper review.">
+    <style>
+        /* ==================== Design System ==================== */
+        :root {
+            --bg: #0f172a;
+            --bg2: #1e293b;
+            --bg3: #334155;
+            --ink: #f1f5f9;
+            --muted: #94a3b8;
+            --accent: #6366f1;
+            --accent2: #8b5cf6;
+            --accent3: #06b6d4;
+            --success: #10b981;
+            --rule: rgba(148, 163, 184, 0.15);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+            --glass: rgba(30, 41, 59, 0.6);
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ==================== Hero Section ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, -2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: var(--muted);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--glass);
+            border: 1px solid var(--rule);
+            backdrop-filter: blur(10px);
+        }
+
+        .badge i { width: 14px; height: 14px; }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5); }
+
+        .btn-secondary {
+            background: var(--glass);
+            color: var(--ink);
+            border: 1px solid var(--rule);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--muted);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* ==================== Sections ==================== */
+        .section {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 3rem;
+        }
+
+        /* ==================== Feature Cards ==================== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--bg2);
+            border: 1px solid var(--rule);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* ==================== Pipeline ==================== */
+        .pipeline-container {
+            background: var(--bg2);
+            border: 1px solid var(--rule);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            overflow-x: auto;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 800px;
+            justify-content: center;
+        }
+
+        .pipeline-stage {
+            flex: 1;
+            text-align: center;
+            padding: 1.2rem 0.8rem;
+            border-radius: 12px;
+            background: var(--bg3);
+            border: 1px solid var(--rule);
+            transition: transform 0.2s;
+        }
+
+        .pipeline-stage:hover { transform: scale(1.05); border-color: var(--accent); }
+
+        .pipeline-stage .stage-code {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent3);
+            margin-bottom: 0.3rem;
+        }
+
+        .pipeline-stage .stage-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pipeline-arrow {
+            color: var(--muted);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* ==================== Skill Table ==================== */
+        .skill-table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--rule);
+        }
+
+        .skill-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .skill-table thead {
+            background: var(--bg2);
+        }
+
+        .skill-table th {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .skill-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--rule);
+            font-size: 0.9rem;
+        }
+
+        .skill-table tr:last-child td { border-bottom: none; }
+        .skill-table tr:hover { background: rgba(99, 102, 241, 0.05); }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tier-1 { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
+        .tier-2 { background: rgba(139, 92, 246, 0.2); color: var(--accent2); }
+        .tier-3 { background: rgba(6, 182, 212, 0.2); color: var(--accent3); }
+
+        /* ==================== GVR Diagram ==================== */
+        .gvr-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .gvr-phase {
+            background: var(--bg2);
+            border: 1px solid var(--rule);
+            border-radius: var(--radius);
+            padding: 2rem;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .gvr-phase .phase-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+        .gvr-phase h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .gvr-phase p { color: var(--muted); font-size: 0.85rem; }
+
+        .gvr-loop {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* ==================== Code Block ==================== */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .code-block pre {
+            font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-block .kw { color: #c084fc; }
+        .code-block .fn { color: #60a5fa; }
+        .code-block .str { color: #34d399; }
+        .code-block .cmt { color: #64748b; }
+
+        /* ==================== Stats ==================== */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ==================== Footer ==================== */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--rule);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .pipeline-flow { flex-direction: column; min-width: auto; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            .stats-row { gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>MathMod-Pilot</h1>
+        <p class="tagline">An Agent-Native Skill Library for Mathematical Modelling Competitions<br>面向数学建模竞赛的 Agent 原生技能库</p>
+        <div class="badges">
+            <span class="badge">🐍 Python 3.10+</span>
+            <span class="badge">📜 MIT License</span>
+            <span class="badge">🧩 15 Skills</span>
+            <span class="badge">⚙️ Pipeline S0–S7</span>
+            <span class="badge">🏆 CUMCM / MCM</span>
+        </div>
+        <div class="cta-group">
+            <a href="https://github.com/Fatespur/mathmod-pilot" class="btn btn-primary" target="_blank">
+                ⭐ View on GitHub
+            </a>
+            <a href="#quickstart" class="btn btn-secondary">
+                📖 Quickstart
+            </a>
+        </div>
+    </div>
+    <div class="scroll-hint">▼</div>
+</section>
+
+<!-- ==================== STATS ==================== -->
+<section class="section" style="padding-top: 3rem; padding-bottom: 3rem;">
+    <div class="stats-row">
+        <div class="stat">
+            <div class="stat-number">15</div>
+            <div class="stat-label">Skills</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Pipeline Stages</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Skill Tiers</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Open Source</div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FEATURES ==================== -->
+<section class="section">
+    <h2 class="section-title">Why MathMod-Pilot?</h2>
+    <p class="section-subtitle">A dynamic plugin architecture that covers the full CUMCM/MCM pipeline — from problem analysis to paper review.</p>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔌</div>
+            <h3>Dynamic Plugin Architecture</h3>
+            <p>Skills are discovered at run-time. Drop a folder with SKILL.md + skill.py into the skills directory — no registration code needed.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3>Generate-Verify-Revise Loop</h3>
+            <p>The mle-solver iteratively generates code, runs it, captures errors, and revises until all hard assertions pass — fully autonomous.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Publication-Grade Visualisation</h3>
+            <p>Multiple figure skills cover CUMCM charts, Nature/Science journal figures, algorithm flowcharts, and MATLAB plots.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>Full Paper Lifecycle</h3>
+            <p>From brainstorming to nine-dimension final review — including CUMCM (Chinese) and MCM (English) dual-mode paper writing.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🧪</div>
+            <h3>Model Validation Built-in</h3>
+            <p>OAT / Morris / Sobol sensitivity analysis, Monte-Carlo uncertainty, and residual diagnostics via SALib + statsmodels.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Competition-Proven</h3>
+            <p>Skills are distilled from national-level competition experience, including CUMCM award-winning strategies and lessons learned.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== PIPELINE ==================== -->
+<section class="section">
+    <h2 class="section-title">Core Pipeline: S0 → S7</h2>
+    <p class="section-subtitle">Eight stages thread context forward — each skill receives the previous stage's output.</p>
+    <div class="pipeline-container">
+        <div class="pipeline-flow">
+            <div class="pipeline-stage">
+                <div class="stage-code">S0</div>
+                <div class="stage-name">brainstorming</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S1</div>
+                <div class="stage-name">problem-analyzer</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S2</div>
+                <div class="stage-name">data-processing</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S3</div>
+                <div class="stage-name">mle-solver</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S4</div>
+                <div class="stage-name">model-validation</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S5</div>
+                <div class="stage-name">scipilot-figure</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S6</div>
+                <div class="stage-name">mcm-paper-writing</div>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-stage">
+                <div class="stage-code">S7</div>
+                <div class="stage-name">paper-review</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SKILL MATRIX ==================== -->
+<section class="section">
+    <h2 class="section-title">Skill Matrix</h2>
+    <p class="section-subtitle">15 skills across 3 tiers — Tier 1 (core pipeline), Tier 2 (visualisation), Tier 3 (writing & review).</p>
+    <div class="skill-table-wrap">
+        <table class="skill-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Skill</th>
+                    <th>Tier</th>
+                    <th>Stage</th>
+                    <th>Version</th>
+                    <th>Core Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>brainstorming</td><td><span class="tier-badge tier-1">T1</span></td><td>S0</td><td>2.0</td><td>Requirement exploration & pipeline init</td></tr>
+                <tr><td>2</td><td>problem-analyzer</td><td><span class="tier-badge tier-1">T1</span></td><td>S1</td><td>14.0</td><td>15-type routing, hard assertions, first-principles audit</td></tr>
+                <tr><td>3</td><td>data-processing</td><td><span class="tier-badge tier-1">T1</span></td><td>S2</td><td>4.0</td><td>Multi-format loading, outlier detection, constraint validation</td></tr>
+                <tr><td>4</td><td>mle-solver</td><td><span class="tier-badge tier-1">T1</span></td><td>S3</td><td>9.0</td><td>Generate-Verify-Revise code loop; GA/PSO/SA/DE optimisers</td></tr>
+                <tr><td>5</td><td>model-validation</td><td><span class="tier-badge tier-1">T1</span></td><td>S4</td><td>8.0</td><td>OAT/Morris/Sobol sensitivity, Monte-Carlo, residual diagnostics</td></tr>
+                <tr><td>6</td><td>scipilot-figure</td><td><span class="tier-badge tier-1">T1</span></td><td>S5</td><td>2.0</td><td>CUMCM/MCM visualisation dispatcher with chart-type routing</td></tr>
+                <tr><td>7</td><td>mcm-paper-writing</td><td><span class="tier-badge tier-1">T1</span></td><td>S6</td><td>5.0</td><td>CUMCM (Chinese) / MCM (English) dual-mode, macro-variable driven</td></tr>
+                <tr><td>8</td><td>paper-review</td><td><span class="tier-badge tier-1">T1</span></td><td>S7</td><td>4.0</td><td>Nine-dimension review, award-paper benchmarking, repair routing</td></tr>
+                <tr><td>9</td><td>scipilot-figure-skill</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>2.1</td><td>Visualisation advisor: data profiling → chart recommendation → rendering</td></tr>
+                <tr><td>10</td><td>diagram-generator</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>Algorithm flowcharts, framework & architecture diagrams</td></tr>
+                <tr><td>11</td><td>matlab-figure</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>MATLAB 3-D surfaces, vector fields (quiver), Simulink</td></tr>
+                <tr><td>12</td><td>nature-figure</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>Nature/Science journal-grade figures; Python/R dual backend; AI schematics</td></tr>
+                <tr><td>13</td><td>winning-paper-analysis</td><td><span class="tier-badge tier-3">T3</span></td><td>S6</td><td>1.0</td><td>Award-winning paper structure, section proportion & writing patterns</td></tr>
+                <tr><td>14</td><td>reference-manager</td><td><span class="tier-badge tier-3">T3</span></td><td>S6</td><td>1.0</td><td>GB/T 7714 (CUMCM) & APA (MCM) formatting, DOI completeness checks</td></tr>
+                <tr><td>15</td><td>systematic-debugging</td><td><span class="tier-badge tier-3">T3</span></td><td>aux</td><td>3.0</td><td>Anti-pattern library, automatic error-repair routing</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ==================== GVR MECHANISM ==================== -->
+<section class="section">
+    <h2 class="section-title">mle-solver: Generate-Verify-Revise</h2>
+    <p class="section-subtitle">The computational heart of MathMod-Pilot — an iterative self-correction loop that runs until all hard assertions pass.</p>
+    <div class="gvr-container">
+        <div class="gvr-phase">
+            <div class="phase-icon">⚙️</div>
+            <h4>Generate</h4>
+            <p>Translate the mathematical model into executable Python code — regression, optimisation, ODE solving, evaluation methods.</p>
+        </div>
+        <div class="gvr-phase">
+            <div class="phase-icon">🔍</div>
+            <h4>Verify</h4>
+            <p>Run the code and check three layers: S1 hard assertions, physical consistency, and model-reality cross-validation.</p>
+        </div>
+        <div class="gvr-phase">
+            <div class="phase-icon">🔧</div>
+            <h4>Revise</h4>
+            <p>Feed captured errors back into Generate. The loop continues until all assertions pass or max revision count is reached.</p>
+        </div>
+    </div>
+    <div class="gvr-loop">↻ Iterates until all hard assertions PASS</div>
+</section>
+
+<!-- ==================== QUICKSTART ==================== -->
+<section class="section" id="quickstart">
+    <h2 class="section-title">Quickstart</h2>
+    <p class="section-subtitle">Get started in three lines of Python.</p>
+    <div class="code-block">
+<pre><span class="cmt"># Install</span>
+pip install -e <span class="str">".[full]"</span>
+
+<span class="cmt"># Load skills and run the pipeline</span>
+<span class="kw">from</span> mathmod_pilot.core <span class="kw">import</span> MathModPilotAgent
+
+agent = <span class="fn">MathModPilotAgent</span>()
+<span class="fn">print</span>(agent.<span class="fn">list_skills</span>())
+<span class="cmt"># ['brainstorming', 'data-processing', ..., 'systematic-debugging']</span>
+
+<span class="cmt"># Run the full S0 → S7 pipeline</span>
+results = agent.<span class="fn">run_pipeline</span>({
+    <span class="str">"problem_text"</span>: <span class="str">"2023 CUMCM Problem A: ..."</span>,
+    <span class="str">"data_path"</span>: <span class="str">"data.xlsx"</span>,
+})</pre>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+    <p>
+        <a href="https://github.com/Fatespur/mathmod-pilot" target="_blank">GitHub Repository</a> ·
+        <a href="https://github.com/Fatespur/mathmod-pilot#readme" target="_blank">README</a> ·
+        <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/ACKNOWLEDGEMENTS.md" target="_blank">Acknowledgements</a> ·
+        <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/LICENSE" target="_blank">MIT License</a>
+    </p>
+    <p style="margin-top: 1rem;">© 2026 MathMod-Pilot Contributors · Built with ❤️ for mathematical modelling</p>
+</footer>
+
+</body>
+</html>

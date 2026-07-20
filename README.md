@@ -5,6 +5,11 @@
 [![Code Style: Ruff](https://img.shields.io/badge/Code%20Style-Ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![Skills: 15](https://img.shields.io/badge/Skills-15-success.svg)](#skill-matrix)
 [![Pipeline: S0–S7](https://img.shields.io/badge/Pipeline-S0%E2%80%93S7-informational.svg)](#system-architecture)
+[![Website](https://img.shields.io/badge/Website-GitHub%20Pages-6366f1.svg)](https://fatespur.github.io/mathmod-pilot/)
+
+> 🌐 **Project Showcase**: Visit our interactive website at
+> **<https://fatespur.github.io/mathmod-pilot/>** for a visual tour of the
+> library's architecture, skill matrix, and Generate-Verify-Revise mechanism.
 
 **[English](#english)** | **[中文](#中文)**
 
@@ -326,6 +331,9 @@ original copyright notices.
 
 > 面向数学建模竞赛（CUMCM / MCM）的 Agent-Native 技能库，覆盖从问题分析
 > 到论文评审的全流程。
+
+> 🌐 **项目展示页**：访问 **<https://fatespur.github.io/mathmod-pilot/>**
+> 查看库的架构、技能矩阵和 Generate-Verify-Revise 机制的交互式可视化介绍。
 
 MathMod-Pilot 将 **15 个专业技能**——每个技能都是一个独立的文件夹，包含原生
 `SKILL.md` 提示词和 Python 执行入口——打包为一个可安装的库。技能在运行时
