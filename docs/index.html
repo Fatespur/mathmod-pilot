@@ -1,656 +1,2137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathMod-Pilot — Agent-Native Skill Library for Mathematical Modelling</title>
-    <meta name="description" content="An Agent-Native skill library for mathematical modelling competitions (CUMCM/MCM), covering the full pipeline from problem analysis to paper review.">
-    <style>
-        /* ==================== Design System ==================== */
-        :root {
-            --bg: #0f172a;
-            --bg2: #1e293b;
-            --bg3: #334155;
-            --ink: #f1f5f9;
-            --muted: #94a3b8;
-            --accent: #6366f1;
-            --accent2: #8b5cf6;
-            --accent3: #06b6d4;
-            --success: #10b981;
-            --rule: rgba(148, 163, 184, 0.15);
-            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
-            --glass: rgba(30, 41, 59, 0.6);
-            --radius: 16px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathMod-Pilot — Agent-Native Skill Library for Mathematical Modelling</title>
+<meta name="description" content="An Agent-Native skill library for mathematical modelling competitions (CUMCM/MCM), covering the full pipeline from problem analysis to paper review. 15 specialised skills, 8 pipeline stages, Generate-Verify-Revise iterative architecture.">
+<style>
+/* ==================== Design System ==================== */
+:root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --bg3: #334155;
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --accent3: #06b6d4;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --rule: rgba(148, 163, 184, 0.15);
+    --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+    --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    --glass: rgba(30, 41, 59, 0.6);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+    --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--ink);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
 
-        /* ==================== Hero Section ==================== */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            background: var(--bg);
-            overflow: hidden;
-        }
+/* ==================== Language Toggle ==================== */
+body[data-lang="en"] [data-lang="zh"] { display: none !important; }
+body[data-lang="zh"] [data-lang="en"] { display: none !important; }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-                        radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
-            animation: float 20s ease-in-out infinite;
-        }
+.lang-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 4px;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    padding: 4px;
+    box-shadow: var(--shadow);
+}
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(2%, -2%) rotate(1deg); }
-            66% { transform: translate(-1%, 1%) rotate(-1deg); }
-        }
+.lang-switcher button {
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
 
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            padding: 2rem;
-        }
+.lang-switcher button.active {
+    background: var(--gradient);
+    color: #fff;
+}
 
-        .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
+/* ==================== Hero Section ==================== */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    background: var(--bg);
+    overflow: hidden;
+    padding: 80px 20px 40px;
+}
 
-        .hero .tagline {
-            font-size: clamp(1rem, 2.5vw, 1.4rem);
-            color: var(--muted);
-            margin-bottom: 2rem;
-            font-weight: 400;
-        }
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.10) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+}
 
-        .badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 2.5rem;
-        }
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-30px, 30px); }
+    66% { transform: translate(30px, -20px); }
+}
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.4rem 0.9rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: var(--glass);
-            border: 1px solid var(--rule);
-            backdrop-filter: blur(10px);
-        }
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+}
 
-        .badge i { width: 14px; height: 14px; }
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-size: 14px;
+    color: var(--accent3);
+    margin-bottom: 32px;
+    backdrop-filter: blur(10px);
+}
 
-        .cta-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+.hero-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.85rem 1.8rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
 
-        .btn-primary {
-            background: var(--gradient);
-            color: white;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        }
+.hero h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    line-height: 1.1;
+}
 
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5); }
+.hero-tagline {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: var(--muted);
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        .btn-secondary {
-            background: var(--glass);
-            color: var(--ink);
-            border: 1px solid var(--rule);
-            backdrop-filter: blur(10px);
-        }
+.hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 48px;
+}
 
-        .btn-secondary:hover { transform: translateY(-2px); border-color: var(--accent); }
+.hero-badge-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--rule);
+    background: var(--bg2);
+}
 
-        .scroll-hint {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: var(--muted);
-            animation: bounce 2s infinite;
-        }
+.hero-badge-item.python { color: #3776AB; }
+.hero-badge-item.license { color: var(--success); }
+.hero-badge-item.skills { color: var(--accent); }
+.hero-badge-item.pipeline { color: var(--accent3); }
+.hero-badge-item.style { color: var(--accent2); }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(8px); }
-        }
+.hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
 
-        /* ==================== Sections ==================== */
-        .section {
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 5rem 2rem;
-        }
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+}
 
-        .section-title {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+.btn-primary {
+    background: var(--gradient);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
 
-        .section-subtitle {
-            color: var(--muted);
-            font-size: 1.05rem;
-            margin-bottom: 3rem;
-        }
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(99, 102, 241, 0.6);
+}
 
-        /* ==================== Feature Cards ==================== */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
+.btn-secondary {
+    background: var(--glass);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    backdrop-filter: blur(10px);
+}
 
-        .feature-card {
-            background: var(--bg2);
-            border: 1px solid var(--rule);
-            border-radius: var(--radius);
-            padding: 2rem;
-            transition: transform 0.2s, border-color 0.2s;
-        }
+.btn-secondary:hover {
+    background: var(--bg2);
+    border-color: var(--accent);
+}
 
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
+/* ==================== Section Base ==================== */
+section {
+    padding: 100px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
 
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
+.section-label {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent3);
+    margin-bottom: 16px;
+    font-family: var(--mono);
+}
 
-        .feature-card h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
+.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
 
-        .feature-card p {
-            color: var(--muted);
-            font-size: 0.95rem;
-        }
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 60px;
+    max-width: 700px;
+}
 
-        /* ==================== Pipeline ==================== */
-        .pipeline-container {
-            background: var(--bg2);
-            border: 1px solid var(--rule);
-            border-radius: var(--radius);
-            padding: 2.5rem;
-            overflow-x: auto;
-        }
+/* ==================== Stats Section ==================== */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
 
-        .pipeline-flow {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 800px;
-            justify-content: center;
-        }
+.stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    text-align: center;
+    transition: all 0.3s;
+}
 
-        .pipeline-stage {
-            flex: 1;
-            text-align: center;
-            padding: 1.2rem 0.8rem;
-            border-radius: 12px;
-            background: var(--bg3);
-            border: 1px solid var(--rule);
-            transition: transform 0.2s;
-        }
+.stat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
 
-        .pipeline-stage:hover { transform: scale(1.05); border-color: var(--accent); }
+.stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 12px;
+}
 
-        .pipeline-stage .stage-code {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--accent3);
-            margin-bottom: 0.3rem;
-        }
+.stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 
-        .pipeline-stage .stage-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+/* ==================== Architecture Section ==================== */
+.arch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
 
-        .pipeline-arrow {
-            color: var(--muted);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
+.arch-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: all 0.3s;
+}
 
-        /* ==================== Skill Table ==================== */
-        .skill-table-wrap {
-            overflow-x: auto;
-            border-radius: var(--radius);
-            border: 1px solid var(--rule);
-        }
+.arch-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
 
-        .skill-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
+.arch-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
 
-        .skill-table thead {
-            background: var(--bg2);
-        }
+.arch-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
 
-        .skill-table th {
-            padding: 1rem;
-            text-align: left;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--rule);
-        }
+.arch-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
 
-        .skill-table td {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid var(--rule);
-            font-size: 0.9rem;
-        }
+.arch-card code {
+    background: var(--bg3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    color: var(--accent3);
+}
 
-        .skill-table tr:last-child td { border-bottom: none; }
-        .skill-table tr:hover { background: rgba(99, 102, 241, 0.05); }
+/* ==================== Code Block ==================== */
+.code-block {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.6;
+}
 
-        .tier-badge {
-            display: inline-block;
-            padding: 0.15rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+.code-block .kw { color: var(--accent2); }
+.code-block .fn { color: var(--accent3); }
+.code-block .str { color: var(--success); }
+.code-block .cmt { color: var(--muted); font-style: italic; }
+.code-block .num { color: var(--warning); }
 
-        .tier-1 { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
-        .tier-2 { background: rgba(139, 92, 246, 0.2); color: var(--accent2); }
-        .tier-3 { background: rgba(6, 182, 212, 0.2); color: var(--accent3); }
+/* ==================== Pipeline Section ==================== */
+.pipeline-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 40px 0;
+}
 
-        /* ==================== GVR Diagram ==================== */
-        .gvr-container {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-        }
+.pipeline-stage {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+}
 
-        .gvr-phase {
-            background: var(--bg2);
-            border: 1px solid var(--rule);
-            border-radius: var(--radius);
-            padding: 2rem;
-            min-width: 200px;
-            text-align: center;
-            position: relative;
-        }
+.pipeline-stage:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 39px;
+    bottom: -20px;
+    width: 2px;
+    height: 40px;
+    background: var(--gradient);
+    opacity: 0.3;
+}
 
-        .gvr-phase .phase-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
-        .gvr-phase h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .gvr-phase p { color: var(--muted); font-size: 0.85rem; }
+.pipeline-badge {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius);
+    background: var(--bg2);
+    border: 2px solid var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    z-index: 1;
+    position: relative;
+}
 
-        .gvr-loop {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--accent);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+.pipeline-badge .stage-num {
+    font-size: 1.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-        /* ==================== Code Block ==================== */
-        .code-block {
-            background: #0d1117;
-            border: 1px solid var(--rule);
-            border-radius: 12px;
-            padding: 1.5rem;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-        }
+.pipeline-badge .stage-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
 
-        .code-block pre {
-            font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
-            font-size: 0.88rem;
-            line-height: 1.6;
-            color: #e2e8f0;
-        }
+.pipeline-content {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-left: 20px;
+    transition: all 0.3s;
+}
 
-        .code-block .kw { color: #c084fc; }
-        .code-block .fn { color: #60a5fa; }
-        .code-block .str { color: #34d399; }
-        .code-block .cmt { color: #64748b; }
+.pipeline-content:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+}
 
-        /* ==================== Stats ==================== */
-        .stats-row {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-        }
+.pipeline-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent3);
+}
 
-        .stat {
-            text-align: center;
-        }
+.pipeline-content .skill-name {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent2);
+    margin-bottom: 12px;
+}
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+.pipeline-content p {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
 
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+/* ==================== GVR Mechanism ==================== */
+.gvr-diagram {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin: 40px 0;
+}
 
-        /* ==================== Footer ==================== */
-        .footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            border-top: 1px solid var(--rule);
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
+.gvr-phase {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+}
 
-        .footer a { color: var(--accent); text-decoration: none; }
-        .footer a:hover { text-decoration: underline; }
+.gvr-phase:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+}
 
-        /* ==================== Responsive ==================== */
-        @media (max-width: 768px) {
-            .pipeline-flow { flex-direction: column; min-width: auto; }
-            .pipeline-arrow { transform: rotate(90deg); }
-            .stats-row { gap: 1.5rem; }
-        }
-    </style>
+.gvr-phase-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 auto 20px;
+}
+
+.gvr-phase h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.gvr-phase ul {
+    list-style: none;
+    text-align: left;
+    margin-top: 16px;
+}
+
+.gvr-phase li {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.gvr-phase li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent3);
+}
+
+.gvr-arrow {
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: var(--accent);
+    z-index: 1;
+}
+
+.gvr-phase:last-child .gvr-arrow { display: none; }
+
+/* ==================== Skill Matrix Table ==================== */
+.table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--rule);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 800px;
+}
+
+thead {
+    background: var(--bg2);
+}
+
+th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--accent3);
+    border-bottom: 2px solid var(--accent);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--muted);
+}
+
+td:first-child {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.tier-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.tier-1 { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
+.tier-2 { background: rgba(139, 92, 246, 0.2); color: var(--accent2); }
+.tier-3 { background: rgba(6, 182, 212, 0.2); color: var(--accent3); }
+
+/* ==================== Skill Detail Cards ==================== */
+.skill-section {
+    margin-bottom: 80px;
+}
+
+.skill-section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--rule);
+}
+
+.skill-section-header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.skill-section-header .tier-tag {
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.skill-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 36px;
+    margin-bottom: 24px;
+    transition: all 0.3s;
+}
+
+.skill-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+}
+
+.skill-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.skill-card-header h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.skill-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.meta-badge {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--mono);
+    background: var(--bg3);
+    color: var(--muted);
+}
+
+.meta-badge.version { color: var(--warning); }
+.meta-badge.stage { color: var(--accent3); }
+.meta-badge.tier { color: var(--accent2); }
+
+.skill-desc {
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 24px;
+    line-height: 1.7;
+}
+
+.skill-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.skill-col h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent3);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+}
+
+.skill-col ul {
+    list-style: none;
+}
+
+.skill-col li {
+    color: var(--muted);
+    font-size: 0.92rem;
+    padding: 6px 0;
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.skill-col li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.skill-col li strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.skill-deps {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.skill-deps-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 8px;
+}
+
+.dep-tag {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: var(--mono);
+    background: var(--bg3);
+    color: var(--accent3);
+}
+
+/* ==================== Quickstart ==================== */
+.qs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin: 40px 0;
+}
+
+.qs-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 28px;
+}
+
+.qs-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--accent3);
+}
+
+/* ==================== Footer ==================== */
+footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--rule);
+    padding: 60px 20px 40px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--accent3);
+}
+
+.footer-copy {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.8;
+}
+
+/* ==================== Callout ==================== */
+.callout {
+    background: rgba(99, 102, 241, 0.08);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin: 24px 0;
+}
+
+.callout p {
+    color: var(--ink);
+    font-size: 0.95rem;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 900px) {
+    .skill-body { grid-template-columns: 1fr; }
+    .gvr-diagram { grid-template-columns: 1fr; }
+    .gvr-arrow { display: none; }
+    .pipeline-stage { flex-direction: column; gap: 12px; }
+    .pipeline-stage:not(:last-child)::after { display: none; }
+    .pipeline-content { margin-left: 0; }
+}
+
+@media (max-width: 600px) {
+    section { padding: 60px 16px; }
+    .hero { padding: 80px 16px 40px; }
+    .stat-card { padding: 24px 16px; }
+    .stat-number { font-size: 2.2rem; }
+    .skill-card { padding: 24px 20px; }
+}
+
+/* Scroll reveal animation */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
 </head>
-<body>
+<body data-lang="zh">
 
-<!-- ==================== HERO ==================== -->
+<!-- ==================== Language Switcher ==================== -->
+<div class="lang-switcher">
+    <button onclick="setLang('zh')" id="btn-zh" class="active">中文</button>
+    <button onclick="setLang('en')" id="btn-en">EN</button>
+</div>
+
+<!-- ==================== Hero ==================== -->
 <section class="hero">
     <div class="hero-content">
+        <div class="hero-badge">
+            <span data-lang="zh">v1.0.0 · MIT License · Agent-Native Architecture</span>
+            <span data-lang="en">v1.0.0 · MIT License · Agent-Native Architecture</span>
+        </div>
         <h1>MathMod-Pilot</h1>
-        <p class="tagline">An Agent-Native Skill Library for Mathematical Modelling Competitions<br>面向数学建模竞赛的 Agent 原生技能库</p>
-        <div class="badges">
-            <span class="badge">🐍 Python 3.10+</span>
-            <span class="badge">📜 MIT License</span>
-            <span class="badge">🧩 15 Skills</span>
-            <span class="badge">⚙️ Pipeline S0–S7</span>
-            <span class="badge">🏆 CUMCM / MCM</span>
+        <p class="hero-tagline">
+            <span data-lang="zh">面向数学建模竞赛（CUMCM / MCM）的 Agent-Native 技能库，覆盖从问题分析到论文评审的全流程</span>
+            <span data-lang="en">An Agent-Native skill library for mathematical modelling competitions (CUMCM / MCM), covering the full pipeline from problem analysis to paper review</span>
+        </p>
+        <div class="hero-badges">
+            <span class="hero-badge-item python">🐍 Python 3.10+</span>
+            <span class="hero-badge-item license">📄 MIT License</span>
+            <span class="hero-badge-item skills">🧩 15 Skills</span>
+            <span class="hero-badge-item pipeline">⚙️ S0–S7 Pipeline</span>
+            <span class="hero-badge-item style">🎨 Ruff Style</span>
         </div>
-        <div class="cta-group">
-            <a href="https://github.com/Fatespur/mathmod-pilot" class="btn btn-primary" target="_blank">
-                ⭐ View on GitHub
+        <div class="hero-cta">
+            <a href="https://github.com/Fatespur/mathmod-pilot" target="_blank" class="btn btn-primary">
+                <span data-lang="zh">GitHub 仓库</span>
+                <span data-lang="en">GitHub Repository</span>
+                →
             </a>
-            <a href="#quickstart" class="btn btn-secondary">
-                📖 Quickstart
+            <a href="https://github.com/Fatespur/mathmod-pilot#installation" target="_blank" class="btn btn-secondary">
+                <span data-lang="zh">快速安装</span>
+                <span data-lang="en">Quick Install</span>
             </a>
         </div>
     </div>
-    <div class="scroll-hint">▼</div>
 </section>
 
-<!-- ==================== STATS ==================== -->
-<section class="section" style="padding-top: 3rem; padding-bottom: 3rem;">
-    <div class="stats-row">
-        <div class="stat">
+<!-- ==================== Stats ==================== -->
+<section>
+    <div class="section-label">Overview / 总览</div>
+    <h2 class="section-title">
+        <span data-lang="zh">用数据说话</span>
+        <span data-lang="en">By the Numbers</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">MathMod-Pilot 将数学建模竞赛的完整工作流封装为 15 个可插拔技能，通过 8 阶段流水线串联，采用自主研发的 Generate-Verify-Revise 迭代架构确保计算结果的可靠性。</span>
+        <span data-lang="en">MathMod-Pilot encapsulates the complete mathematical modelling competition workflow into 15 pluggable skills, connected through an 8-stage pipeline, powered by the independently developed Generate-Verify-Revise iterative architecture to ensure computational reliability.</span>
+    </p>
+    <div class="stats">
+        <div class="stat-card">
             <div class="stat-number">15</div>
-            <div class="stat-label">Skills</div>
+            <div class="stat-label">
+                <span data-lang="zh">专业技能</span>
+                <span data-lang="en">Specialised Skills</span>
+            </div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-number">8</div>
-            <div class="stat-label">Pipeline Stages</div>
+            <div class="stat-label">
+                <span data-lang="zh">流水线阶段</span>
+                <span data-lang="en">Pipeline Stages</span>
+            </div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-number">3</div>
-            <div class="stat-label">Skill Tiers</div>
+            <div class="stat-label">
+                <span data-lang="zh">技能层级</span>
+                <span data-lang="en">Skill Tiers</span>
+            </div>
         </div>
-        <div class="stat">
+        <div class="stat-card">
             <div class="stat-number">100%</div>
-            <div class="stat-label">Open Source</div>
-        </div>
-    </div>
-</section>
-
-<!-- ==================== FEATURES ==================== -->
-<section class="section">
-    <h2 class="section-title">Why MathMod-Pilot?</h2>
-    <p class="section-subtitle">A dynamic plugin architecture that covers the full CUMCM/MCM pipeline — from problem analysis to paper review.</p>
-    <div class="feature-grid">
-        <div class="feature-card">
-            <div class="feature-icon">🔌</div>
-            <h3>Dynamic Plugin Architecture</h3>
-            <p>Skills are discovered at run-time. Drop a folder with SKILL.md + skill.py into the skills directory — no registration code needed.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🔄</div>
-            <h3>Generate-Verify-Revise Loop</h3>
-            <p>The mle-solver iteratively generates code, runs it, captures errors, and revises until all hard assertions pass — fully autonomous.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Publication-Grade Visualisation</h3>
-            <p>Multiple figure skills cover CUMCM charts, Nature/Science journal figures, algorithm flowcharts, and MATLAB plots.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📝</div>
-            <h3>Full Paper Lifecycle</h3>
-            <p>From brainstorming to nine-dimension final review — including CUMCM (Chinese) and MCM (English) dual-mode paper writing.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🧪</div>
-            <h3>Model Validation Built-in</h3>
-            <p>OAT / Morris / Sobol sensitivity analysis, Monte-Carlo uncertainty, and residual diagnostics via SALib + statsmodels.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Competition-Proven</h3>
-            <p>Skills are distilled from national-level competition experience, including CUMCM award-winning strategies and lessons learned.</p>
-        </div>
-    </div>
-</section>
-
-<!-- ==================== PIPELINE ==================== -->
-<section class="section">
-    <h2 class="section-title">Core Pipeline: S0 → S7</h2>
-    <p class="section-subtitle">Eight stages thread context forward — each skill receives the previous stage's output.</p>
-    <div class="pipeline-container">
-        <div class="pipeline-flow">
-            <div class="pipeline-stage">
-                <div class="stage-code">S0</div>
-                <div class="stage-name">brainstorming</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S1</div>
-                <div class="stage-name">problem-analyzer</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S2</div>
-                <div class="stage-name">data-processing</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S3</div>
-                <div class="stage-name">mle-solver</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S4</div>
-                <div class="stage-name">model-validation</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S5</div>
-                <div class="stage-name">scipilot-figure</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S6</div>
-                <div class="stage-name">mcm-paper-writing</div>
-            </div>
-            <span class="pipeline-arrow">→</span>
-            <div class="pipeline-stage">
-                <div class="stage-code">S7</div>
-                <div class="stage-name">paper-review</div>
+            <div class="stat-label">
+                <span data-lang="zh">开源 · MIT</span>
+                <span data-lang="en">Open Source · MIT</span>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ==================== SKILL MATRIX ==================== -->
-<section class="section">
-    <h2 class="section-title">Skill Matrix</h2>
-    <p class="section-subtitle">15 skills across 3 tiers — Tier 1 (core pipeline), Tier 2 (visualisation), Tier 3 (writing & review).</p>
-    <div class="skill-table-wrap">
-        <table class="skill-table">
+<!-- ==================== System Architecture ==================== -->
+<section>
+    <div class="section-label">Architecture / 系统架构</div>
+    <h2 class="section-title">
+        <span data-lang="zh">动态插件架构</span>
+        <span data-lang="en">Dynamic Plugin Architecture</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">核心 Agent 不硬编码任何技能。它在导入时扫描 <code>src/mathmod_pilot/skills/</code> 目录，动态发现并注册每个技能文件夹中的 <code>BaseSkill</code> 子类。添加新技能只需放入一个文件夹——零配置扩展。</span>
+        <span data-lang="en">The core agent does not hard-code any skill. It scans <code>src/mathmod_pilot/skills/</code> at import time, dynamically discovering and registering the <code>BaseSkill</code> subclass in each skill folder. Adding a new skill requires only dropping in a folder—zero configuration.</span>
+    </p>
+    <div class="arch-grid">
+        <div class="arch-card">
+            <div class="arch-icon">🧩</div>
+            <h3>
+                <span data-lang="zh">BaseSkill 抽象基类</span>
+                <span data-lang="en">BaseSkill ABC</span>
+            </h3>
+            <p>
+                <span data-lang="zh">每个技能必须实现 <code>execute(self, inputs: dict) -> dict</code> 抽象方法。基类自动解析 <code>SKILL.md</code> 的 YAML front-matter，填充 <code>SkillMeta</code> 数据类（名称、描述、版本、阶段、层级）。</span>
+                <span data-lang="en">Every skill must implement <code>execute(self, inputs: dict) -> dict</code>. The base class auto-parses the YAML front-matter from <code>SKILL.md</code> to populate a <code>SkillMeta</code> dataclass (name, description, version, stage, tier).</span>
+            </p>
+        </div>
+        <div class="arch-card">
+            <div class="arch-icon">🔍</div>
+            <h3>
+                <span data-lang="zh">discover_skills() 动态扫描</span>
+                <span data-lang="en">discover_skills() Scanner</span>
+            </h3>
+            <p>
+                <span data-lang="zh">遍历 <code>skills/</code> 下每个包含 <code>SKILL.md</code> 的子目录。若存在 <code>skill.py</code>，则导入并实例化首个 <code>BaseSkill</code> 子类；若无 <code>skill.py</code>，则回退到 <code>PromptSkill</code> 包装器，使纯 Markdown 技能也可调用。</span>
+                <span data-lang="en">Iterates every sub-directory of <code>skills/</code> that contains a <code>SKILL.md</code>. If <code>skill.py</code> exists, it imports and instantiates the first <code>BaseSkill</code> subclass; otherwise it falls back to a <code>PromptSkill</code> wrapper so that pure-markdown skills remain callable.</span>
+            </p>
+        </div>
+        <div class="arch-card">
+            <div class="arch-icon">🤖</div>
+            <h3>
+                <span data-lang="zh">MathModPilotAgent 控制器</span>
+                <span data-lang="en">MathModPilotAgent Controller</span>
+            </h3>
+            <p>
+                <span data-lang="zh">持有技能注册表，提供两种执行模式：<code>run_skill(name, inputs)</code> 调用单个技能；<code>run_pipeline(inputs, stages)</code> 串联 S0→S7，将上下文字典逐级传递，使每个阶段获得前一阶段的输出。</span>
+                <span data-lang="en">Holds the skill registry and provides two execution modes: <code>run_skill(name, inputs)</code> invokes a single skill; <code>run_pipeline(inputs, stages)</code> chains S0→S7, threading the context dictionary forward so each stage receives the previous stage's output.</span>
+            </p>
+        </div>
+        <div class="arch-card">
+            <div class="arch-icon">📦</div>
+            <h3>
+                <span data-lang="zh">优雅降级机制</span>
+                <span data-lang="en">Graceful Degradation</span>
+            </h3>
+            <p>
+                <span data-lang="zh">仅 <code>PyYAML</code> 为硬依赖。所有科学计算库（numpy、scipy、scikit-learn、matplotlib 等）均为可选 extras，技能在后端缺失时自动降级而非崩溃。</span>
+                <span data-lang="en">Only <code>PyYAML</code> is a hard dependency. All scientific libraries (numpy, scipy, scikit-learn, matplotlib, etc.) are optional extras; skills degrade gracefully when their backends are absent.</span>
+            </p>
+        </div>
+        <div class="arch-card">
+            <div class="arch-icon">🔗</div>
+            <h3>
+                <span data-lang="zh">Pipeline 上下文传递</span>
+                <span data-lang="en">Pipeline Context Threading</span>
+            </h3>
+            <p>
+                <span data-lang="zh">S1 的硬断言、等X约束、方法路由决策自动传递给 S3；S3 的求解结果传递给 S4 做灵敏度分析；S4 的验证报告传递给 S5 生成验证类图表；S5 的图表传递给 S6 写入论文——全链路数据自动流转。</span>
+                <span data-lang="en">S1's hard assertions, equal-X constraints, and method routing decisions flow to S3; S3's results flow to S4 for sensitivity analysis; S4's validation report flows to S5 for verification charts; S5's figures flow to S6 for paper writing—full-chain automatic data flow.</span>
+            </p>
+        </div>
+        <div class="arch-card">
+            <div class="arch-icon">🛡️</div>
+            <h3>
+                <span data-lang="zh">三层规则优先级体系</span>
+                <span data-lang="en">Three-Tier Rule Priority</span>
+            </h3>
+            <p>
+                <span data-lang="zh">L1 全局硬约束（必须遵守）→ L2 条件硬约束（带 Gate 检查，如 v8 光学规则仅对 A 题生效）→ L3 软建议（可灵活调整）。所有技能共享此体系，受学习机制 v3.0 守护。</span>
+                <span data-lang="en">L1 global hard constraints (mandatory) → L2 conditional hard constraints (with Gate checks, e.g. v8 optics rules apply only to Problem A) → L3 soft suggestions (flexible). All skills share this system, guarded by learning mechanism v3.0.</span>
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== Pipeline S0-S7 ==================== -->
+<section>
+    <div class="section-label">Pipeline / 流水线</div>
+    <h2 class="section-title">
+        <span data-lang="zh">S0 → S7 八阶段流水线</span>
+        <span data-lang="en">S0 → S7 Eight-Stage Pipeline</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">从需求构思到论文终审，每个阶段由一个核心技能驱动，上下文字典在阶段间自动传递，形成完整的建模竞赛工作流闭环。</span>
+        <span data-lang="en">From requirement brainstorming to paper final review, each stage is driven by a core skill, with the context dictionary automatically threaded between stages, forming a complete modelling competition workflow loop.</span>
+    </p>
+    <div class="pipeline-flow">
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S0</span>
+                <span class="stage-label">Init</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">需求构思与流水线初始化</span>
+                    <span data-lang="en">Brainstorming & Pipeline Init</span>
+                </h3>
+                <div class="skill-name">brainstorming</div>
+                <p>
+                    <span data-lang="zh">通过协作对话将模糊想法转化为完整设计文档。一次一问的渐进式验证，内置 HARD-GATE 硬门禁——在设计获批前禁止编写任何代码。</span>
+                    <span data-lang="en">Transforms vague ideas into complete design documents through collaborative dialogue. One-question-at-a-time progressive validation with a built-in HARD-GATE—no code is written until the design is approved.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S1</span>
+                <span class="stage-label">Analyze</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">问题分解与方法路由</span>
+                    <span data-lang="en">Problem Decomposition & Method Routing</span>
+                </h3>
+                <div class="skill-name">problem-analyzer</div>
+                <p>
+                    <span data-lang="zh">15 种问题类型自动识别、物理实体分类、等X约束自动检测、建模方法智能路由、第一性原理审查与硬断言生成。为下游所有阶段提供约束清单和方法建议。</span>
+                    <span data-lang="en">15-type problem classification, physical entity detection, equal-X constraint detection, intelligent method routing, first-principles audit, and hard assertion generation. Provides constraint checklists and method recommendations for all downstream stages.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S2</span>
+                <span class="stage-label">Data</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">数据预处理与质量验证</span>
+                    <span data-lang="en">Data Preprocessing & Quality Validation</span>
+                </h3>
+                <div class="skill-name">data-processing</div>
+                <p>
+                    <span data-lang="zh">多格式加载、缺失值处理（11 种策略）、异常值检测（6 种方法）、物理约束感知验证、经济数据质量检查、不平衡数据/图像/信号处理。链式 API 设计。</span>
+                    <span data-lang="en">Multi-format loading, missing value handling (11 strategies), outlier detection (6 methods), physical-constraint-aware validation, economic data quality checks, imbalanced data/image/signal processing. Chainable API design.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S3</span>
+                <span class="stage-label">Solve</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">模型求解与迭代修正</span>
+                    <span data-lang="en">Model Solving & Iterative Revision</span>
+                </h3>
+                <div class="skill-name">mle-solver</div>
+                <p>
+                    <span data-lang="zh">计算核心。Generate-Verify-Revise 三阶段迭代：自动生成代码→执行验证→失败则修正，直至所有硬断言通过。15 种问题类型方法路由，内置 GA/PSO/SA/DE 启发式优化器。</span>
+                    <span data-lang="en">Computational heart. Generate-Verify-Revise three-phase iteration: auto-generate code → execute & verify → revise on failure, until all hard assertions pass. 15-type method routing, built-in GA/PSO/SA/DE heuristic optimisers.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S4</span>
+                <span class="stage-label">Validate</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">模型检验与不确定性分析</span>
+                    <span data-lang="en">Model Validation & Uncertainty Analysis</span>
+                </h3>
+                <div class="skill-name">model-validation</div>
+                <p>
+                    <span data-lang="zh">八大分析模块：灵敏度分析（OAT/Morris/Sobol/FAST）、模型检验（拟合优度/残差/交叉验证/多重共线性）、蒙特卡洛不确定性、物理约束验证、经济计量诊断、六大验证策略、跨方法一致性、仿真视界完整性。</span>
+                    <span data-lang="en">Eight analysis modules: sensitivity analysis (OAT/Morris/Sobol/FAST), model testing (goodness-of-fit/residuals/cross-validation/multicollinearity), Monte-Carlo uncertainty, physical constraint validation, econometric diagnostics, six validation strategies, cross-method agreement, simulation horizon integrity.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S5</span>
+                <span class="stage-label">Visualize</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">出版级数据可视化</span>
+                    <span data-lang="en">Publication-Grade Visualisation</span>
+                </h3>
+                <div class="skill-name">scipilot-figure</div>
+                <p>
+                    <span data-lang="zh">S5 主调度器。问题类型→图表自动路由，覆盖 14 种问题类型。强制生成所有适用图表，超额供图机制（必需图表≥12 张 + 候选图≥8 张），调度 scipilot-figure-skill（数据图）、diagram-generator（结构图）、matlab-figure、nature-figure。</span>
+                    <span data-lang="en">S5 main dispatcher. Problem-type-to-chart routing covering 14 problem types. Forces generation of all applicable charts, over-supply mechanism (≥12 essential + ≥8 candidate charts), dispatching scipilot-figure-skill (data charts), diagram-generator (structural diagrams), matlab-figure, nature-figure.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S6</span>
+                <span class="stage-label">Write</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">竞赛论文写作</span>
+                    <span data-lang="en">Competition Paper Writing</span>
+                </h3>
+                <div class="skill-name">mcm-paper-writing</div>
+                <p>
+                    <span data-lang="zh">CUMCM 国赛（中文）/ MCM 美赛（英文）双模式。12 个强制章节，五步法建模，宏变量机制（禁止手写任何数字），ABC 题型差异化写作，集成 winning-paper-analysis 获取逐章写作指导。</span>
+                    <span data-lang="en">CUMCM (Chinese) / MCM (English) dual-mode. 12 mandatory sections, five-step modelling, macro-variable mechanism (no manual number writing), ABC problem-type differentiated writing, integrated winning-paper-analysis for chapter-by-chapter writing guidance.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="pipeline-stage">
+            <div class="pipeline-badge">
+                <span class="stage-num">S7</span>
+                <span class="stage-label">Review</span>
+            </div>
+            <div class="pipeline-content">
+                <h3>
+                    <span data-lang="zh">九维度终审与修复路由</span>
+                    <span data-lang="en">Nine-Dimension Review & Repair Routing</span>
+                </h3>
+                <div class="skill-name">paper-review</div>
+                <p>
+                    <span data-lang="zh">质量守门员。9 维度审阅：页数排版/图表质量/语言质量/内容完整性/一致性/获奖论文对标/模型验证完整性/问题类型对齐/经济建模完整性。CRITICAL 问题强制阻断，问题路由到上游技能形成闭环修复。</span>
+                    <span data-lang="en">Quality gatekeeper. 9-dimension review: layout/figure quality/language/completeness/consistency/award-paper benchmarking/validation completeness/problem-type alignment/economic modelling completeness. CRITICAL issues block delivery; problems are routed to upstream skills for closed-loop repair.</span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ==================== GVR Mechanism ==================== -->
+<section>
+    <div class="section-label">Core Mechanism / 核心机制</div>
+    <h2 class="section-title">
+        <span data-lang="zh">Generate-Verify-Revise 迭代架构</span>
+        <span data-lang="en">Generate-Verify-Revise Iterative Architecture</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">mle-solver（S3）的核心机制。代码生成后必须在本地执行并验证通过——无 Traceback、硬断言全通过、物理合理性检查通过、交叉验证通过——任一未通过必须进入 Debug 回路修正，直至全部通过或达到最大修正次数。</span>
+        <span data-lang="en">The core mechanism of mle-solver (S3). Generated code must be executed locally and pass verification—no Traceback, all hard assertions pass, physical feasibility check passes, cross-validation passes—any failure triggers the Debug loop for revision, until all pass or the maximum revision count is reached.</span>
+    </p>
+    <div class="gvr-diagram">
+        <div class="gvr-phase">
+            <div class="gvr-phase-num">1</div>
+            <h3>
+                <span data-lang="zh">Generate · 生成</span>
+                <span data-lang="en">Generate</span>
+            </h3>
+            <p>
+                <span data-lang="zh">将数学模型翻译为可执行 Python 代码</span>
+                <span data-lang="en">Translate the mathematical model into executable Python code</span>
+            </p>
+            <ul>
+                <li><span data-lang="zh">由 S1 问题类型路由到对应方法</span><span data-lang="en">Routed by S1 problem type to corresponding method</span></li>
+                <li><span data-lang="zh">覆盖回归/优化/ODE/评价/预测/机理建模</span><span data-lang="en">Covers regression/optimisation/ODE/evaluation/prediction/mechanistic modelling</span></li>
+                <li><span data-lang="zh">约束方程自动映射为代码断言</span><span data-lang="en">Constraint equations auto-mapped to code assertions</span></li>
+                <li><span data-lang="zh">代码模板库（AHP/SVM/GA/Optuna 等）</span><span data-lang="en">Code template library (AHP/SVM/GA/Optuna, etc.)</span></li>
+            </ul>
+            <span class="gvr-arrow">→</span>
+        </div>
+        <div class="gvr-phase">
+            <div class="gvr-phase-num">2</div>
+            <h3>
+                <span data-lang="zh">Verify · 验证</span>
+                <span data-lang="en">Verify</span>
+            </h3>
+            <p>
+                <span data-lang="zh">运行代码并执行三层检查</span>
+                <span data-lang="en">Run the code and execute three-layer checks</span>
+            </p>
+            <ul>
+                <li><strong><span data-lang="zh">S1 硬断言验证</span><span data-lang="en">S1 Hard Assertions</span></strong><span data-lang="zh">：物理一致性、等X约束、光滑性</span><span data-lang="en">: physical consistency, equal-X constraints, smoothness</span></li>
+                <li><strong><span data-lang="zh">物理一致性检查</span><span data-lang="en">Physical Consistency</span></strong><span data-lang="zh">：量纲齐次、边界可行、单调性</span><span data-lang="en">: dimensional homogeneity, boundary feasibility, monotonicity</span></li>
+                <li><strong><span data-lang="zh">模型-现实交叉验证</span><span data-lang="en">Model-Reality Cross-Validation</span></strong><span data-lang="zh">：对比外部基准（PS10/Gemasolar）</span><span data-lang="en">: compare against external benchmarks (PS10/Gemasolar)</span></li>
+            </ul>
+            <span class="gvr-arrow">→</span>
+        </div>
+        <div class="gvr-phase">
+            <div class="gvr-phase-num">3</div>
+            <h3>
+                <span data-lang="zh">Revise · 修正</span>
+                <span data-lang="en">Revise</span>
+            </h3>
+            <p>
+                <span data-lang="zh">验证失败时，将错误回传重新生成</span>
+                <span data-lang="en">On verification failure, feed errors back to regenerate</span>
+            </p>
+            <ul>
+                <li><span data-lang="zh">捕获错误栈和断言违规信息</span><span data-lang="en">Capture error traces and assertion violations</span></li>
+                <li><span data-lang="zh">匹配反模式库触发 systematic-debugging</span><span data-lang="en">Match anti-patterns to trigger systematic-debugging</span></li>
+                <li><span data-lang="zh">通知 problem-analyzer 反思并调整</span><span data-lang="en">Notify problem-analyzer to reflect and adjust</span></li>
+                <li><span data-lang="zh">循环直至全部通过或达到上限</span><span data-lang="en">Loop until all pass or max count reached</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="callout">
+        <p>
+            <strong><span data-lang="zh">HARD-GATE 硬门禁：</span><span data-lang="en">HARD-GATE:</span></strong>
+            <span data-lang="zh">代码生成后必须在本地执行并验证通过。任一检查未通过，禁止返回"成功"结果，必须进入 Debug 回路。这一机制杜绝了"看似正确但实际有误"的模型代码被带入后续阶段。</span>
+            <span data-lang="en">Generated code must be executed locally and pass verification. If any check fails, returning a "success" result is forbidden—the Debug loop must be entered. This mechanism prevents "looks-correct-but-actually-wrong" model code from being carried into subsequent stages.</span>
+        </p>
+    </div>
+</section>
+
+<!-- ==================== Skill Matrix Table ==================== -->
+<section>
+    <div class="section-label">Skill Matrix / 技能矩阵</div>
+    <h2 class="section-title">
+        <span data-lang="zh">15 个技能总览</span>
+        <span data-lang="en">15 Skills at a Glance</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">技能按三个层级分组：<strong>Tier 1</strong> 核心流水线技能（8 个）、<strong>Tier 2</strong> 可视化专项技能（4 个）、<strong>Tier 3</strong> 写作与评审辅助技能（3 个）。</span>
+        <span data-lang="en">Skills are grouped into three tiers: <strong>Tier 1</strong> core pipeline skills (8), <strong>Tier 2</strong> visualisation specialists (4), <strong>Tier 3</strong> writing & review aids (3).</span>
+    </p>
+    <div class="table-wrap">
+        <table>
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Skill</th>
-                    <th>Tier</th>
-                    <th>Stage</th>
-                    <th>Version</th>
-                    <th>Core Function</th>
+                    <th><span data-lang="zh">技能</span><span data-lang="en">Skill</span></th>
+                    <th><span data-lang="zh">阶段</span><span data-lang="en">Stage</span></th>
+                    <th><span data-lang="zh">层级</span><span data-lang="en">Tier</span></th>
+                    <th><span data-lang="zh">版本</span><span data-lang="en">Version</span></th>
+                    <th><span data-lang="zh">核心功能</span><span data-lang="en">Core Function</span></th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td>brainstorming</td><td><span class="tier-badge tier-1">T1</span></td><td>S0</td><td>2.0</td><td>Requirement exploration & pipeline init</td></tr>
-                <tr><td>2</td><td>problem-analyzer</td><td><span class="tier-badge tier-1">T1</span></td><td>S1</td><td>14.0</td><td>15-type routing, hard assertions, first-principles audit</td></tr>
-                <tr><td>3</td><td>data-processing</td><td><span class="tier-badge tier-1">T1</span></td><td>S2</td><td>4.0</td><td>Multi-format loading, outlier detection, constraint validation</td></tr>
-                <tr><td>4</td><td>mle-solver</td><td><span class="tier-badge tier-1">T1</span></td><td>S3</td><td>9.0</td><td>Generate-Verify-Revise code loop; GA/PSO/SA/DE optimisers</td></tr>
-                <tr><td>5</td><td>model-validation</td><td><span class="tier-badge tier-1">T1</span></td><td>S4</td><td>8.0</td><td>OAT/Morris/Sobol sensitivity, Monte-Carlo, residual diagnostics</td></tr>
-                <tr><td>6</td><td>scipilot-figure</td><td><span class="tier-badge tier-1">T1</span></td><td>S5</td><td>2.0</td><td>CUMCM/MCM visualisation dispatcher with chart-type routing</td></tr>
-                <tr><td>7</td><td>mcm-paper-writing</td><td><span class="tier-badge tier-1">T1</span></td><td>S6</td><td>5.0</td><td>CUMCM (Chinese) / MCM (English) dual-mode, macro-variable driven</td></tr>
-                <tr><td>8</td><td>paper-review</td><td><span class="tier-badge tier-1">T1</span></td><td>S7</td><td>4.0</td><td>Nine-dimension review, award-paper benchmarking, repair routing</td></tr>
-                <tr><td>9</td><td>scipilot-figure-skill</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>2.1</td><td>Visualisation advisor: data profiling → chart recommendation → rendering</td></tr>
-                <tr><td>10</td><td>diagram-generator</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>Algorithm flowcharts, framework & architecture diagrams</td></tr>
-                <tr><td>11</td><td>matlab-figure</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>MATLAB 3-D surfaces, vector fields (quiver), Simulink</td></tr>
-                <tr><td>12</td><td>nature-figure</td><td><span class="tier-badge tier-2">T2</span></td><td>S5</td><td>1.0</td><td>Nature/Science journal-grade figures; Python/R dual backend; AI schematics</td></tr>
-                <tr><td>13</td><td>winning-paper-analysis</td><td><span class="tier-badge tier-3">T3</span></td><td>S6</td><td>1.0</td><td>Award-winning paper structure, section proportion & writing patterns</td></tr>
-                <tr><td>14</td><td>reference-manager</td><td><span class="tier-badge tier-3">T3</span></td><td>S6</td><td>1.0</td><td>GB/T 7714 (CUMCM) & APA (MCM) formatting, DOI completeness checks</td></tr>
-                <tr><td>15</td><td>systematic-debugging</td><td><span class="tier-badge tier-3">T3</span></td><td>aux</td><td>3.0</td><td>Anti-pattern library, automatic error-repair routing</td></tr>
+                <tr><td>1</td><td>brainstorming</td><td>S0</td><td><span class="tier-badge tier-1">T1</span></td><td>v2.0</td><td><span data-lang="zh">需求探索与流水线初始化</span><span data-lang="en">Requirement exploration & pipeline init</span></td></tr>
+                <tr><td>2</td><td>problem-analyzer</td><td>S1</td><td><span class="tier-badge tier-1">T1</span></td><td>v14</td><td><span data-lang="zh">15 类型路由、硬断言、第一性原理审查</span><span data-lang="en">15-type routing, hard assertions, first-principles audit</span></td></tr>
+                <tr><td>3</td><td>data-processing</td><td>S2</td><td><span class="tier-badge tier-1">T1</span></td><td>v4</td><td><span data-lang="zh">多格式加载、清洗、物理约束验证</span><span data-lang="en">Multi-format loading, cleaning, constraint validation</span></td></tr>
+                <tr><td>4</td><td>mle-solver</td><td>S3</td><td><span class="tier-badge tier-1">T1</span></td><td>v9</td><td><span data-lang="zh">GVR 代码循环；GA/PSO/SA/DE 优化器</span><span data-lang="en">GVR code loop; GA/PSO/SA/DE optimisers</span></td></tr>
+                <tr><td>5</td><td>model-validation</td><td>S4</td><td><span class="tier-badge tier-1">T1</span></td><td>v8</td><td><span data-lang="zh">OAT/Morris/Sobol 灵敏度、蒙特卡洛、残差诊断</span><span data-lang="en">OAT/Morris/Sobol sensitivity, Monte-Carlo, residual diagnostics</span></td></tr>
+                <tr><td>6</td><td>scipilot-figure</td><td>S5</td><td><span class="tier-badge tier-1">T1</span></td><td>v2</td><td><span data-lang="zh">CUMCM/MCM 可视化调度器与图表路由</span><span data-lang="en">CUMCM/MCM visualisation dispatcher & chart routing</span></td></tr>
+                <tr><td>7</td><td>mcm-paper-writing</td><td>S6</td><td><span class="tier-badge tier-1">T1</span></td><td>v5</td><td><span data-lang="zh">CUMCM/MCM 双模式、宏变量驱动写作</span><span data-lang="en">CUMCM/MCM dual-mode, macro-variable driven writing</span></td></tr>
+                <tr><td>8</td><td>paper-review</td><td>S7</td><td><span class="tier-badge tier-1">T1</span></td><td>v4</td><td><span data-lang="zh">九维度审阅、获奖论文对标、修复路由</span><span data-lang="en">Nine-dimension review, award benchmarking, repair routing</span></td></tr>
+                <tr><td>9</td><td>scipilot-figure-skill</td><td>S5</td><td><span class="tier-badge tier-2">T2</span></td><td>v2.1</td><td><span data-lang="zh">数据剖析→图型推荐→渲染的视觉化顾问</span><span data-lang="en">Data profiling → chart recommendation → rendering advisor</span></td></tr>
+                <tr><td>10</td><td>diagram-generator</td><td>S5</td><td><span class="tier-badge tier-2">T2</span></td><td>v3</td><td><span data-lang="zh">算法流程图、框架图、架构图</span><span data-lang="en">Algorithm flowcharts, framework & architecture diagrams</span></td></tr>
+                <tr><td>11</td><td>matlab-figure</td><td>S5</td><td><span class="tier-badge tier-2">T2</span></td><td>v1</td><td><span data-lang="zh">MATLAB 3D 曲面、向量场、Simulink</span><span data-lang="en">MATLAB 3-D surfaces, vector fields, Simulink</span></td></tr>
+                <tr><td>12</td><td>nature-figure</td><td>S5</td><td><span class="tier-badge tier-2">T2</span></td><td>v2</td><td><span data-lang="zh">Nature/Science 期刊级图表；Python/R 双后端</span><span data-lang="en">Nature/Science journal-grade figures; Python/R dual backend</span></td></tr>
+                <tr><td>13</td><td>winning-paper-analysis</td><td>S6</td><td><span class="tier-badge tier-3">T3</span></td><td>v1</td><td><span data-lang="zh">获奖论文结构、篇幅分配、写作模式分析</span><span data-lang="en">Award paper structure, proportion & writing pattern analysis</span></td></tr>
+                <tr><td>14</td><td>reference-manager</td><td>S6</td><td><span class="tier-badge tier-3">T3</span></td><td>v1</td><td><span data-lang="zh">GB/T 7714（国赛）& APA（美赛）格式化</span><span data-lang="en">GB/T 7714 (CUMCM) & APA (MCM) formatting</span></td></tr>
+                <tr><td>15</td><td>systematic-debugging</td><td>aux</td><td><span class="tier-badge tier-3">T3</span></td><td>v4</td><td><span data-lang="zh">反模式库、自动错误修复路由</span><span data-lang="en">Anti-pattern library, automatic error-repair routing</span></td></tr>
             </tbody>
         </table>
     </div>
 </section>
 
-<!-- ==================== GVR MECHANISM ==================== -->
-<section class="section">
-    <h2 class="section-title">mle-solver: Generate-Verify-Revise</h2>
-    <p class="section-subtitle">The computational heart of MathMod-Pilot — an iterative self-correction loop that runs until all hard assertions pass.</p>
-    <div class="gvr-container">
-        <div class="gvr-phase">
-            <div class="phase-icon">⚙️</div>
-            <h4>Generate</h4>
-            <p>Translate the mathematical model into executable Python code — regression, optimisation, ODE solving, evaluation methods.</p>
+<!-- ==================== Tier 1 Detailed Skills ==================== -->
+<section>
+    <div class="section-label">Tier 1 / 核心流水线</div>
+    <div class="skill-section-header">
+        <h2>
+            <span data-lang="zh">Tier 1 — 核心流水线技能</span>
+            <span data-lang="en">Tier 1 — Core Pipeline Skills</span>
+        </h2>
+        <span class="tier-tag tier-1">8 Skills</span>
+    </div>
+
+    <!-- Skill 1: brainstorming -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>brainstorming</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S0</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v2.0</span>
+            </div>
         </div>
-        <div class="gvr-phase">
-            <div class="phase-icon">🔍</div>
-            <h4>Verify</h4>
-            <p>Run the code and check three layers: S1 hard assertions, physical consistency, and model-reality cross-validation.</p>
+        <p class="skill-desc">
+            <span data-lang="zh">在任何创意性工作之前必须使用的入口技能，通过协作对话将模糊想法转化为完整设计和规格，内置 HARD-GATE 硬门禁确保设计获批后才进入实现阶段。</span>
+            <span data-lang="en">The mandatory entry skill before any creative work, transforming vague ideas into complete designs and specifications through collaborative dialogue, with a built-in HARD-GATE ensuring implementation only begins after design approval.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">项目上下文探索</span><span data-lang="en">Context Exploration</span></strong><span data-lang="zh">：自动读取文件、文档、近期 commit</span><span data-lang="en">: auto-reads files, docs, recent commits</span></li>
+                    <li><strong><span data-lang="zh">渐进式提问</span><span data-lang="en">Progressive Questions</span></strong><span data-lang="zh">：一次一问，多选题优先，避免 overwhelm</span><span data-lang="en">: one question at a time, multiple-choice preferred</span></li>
+                    <li><strong><span data-lang="zh">方案对比</span><span data-lang="en">Option Comparison</span></strong><span data-lang="zh">：提出 2-3 种方案及权衡，给出推荐</span><span data-lang="en">: proposes 2-3 options with trade-offs and recommendation</span></li>
+                    <li><strong><span data-lang="zh">设计文档生成</span><span data-lang="en">Design Document</span></strong><span data-lang="zh">：保存至 docs/specs/ 目录</span><span data-lang="en">: saved to docs/specs/ directory</span></li>
+                    <li><strong><span data-lang="zh">Spec 自检</span><span data-lang="en">Spec Self-Check</span></strong><span data-lang="zh">：占位符扫描、一致性检查、范围检查、歧义检查</span><span data-lang="en">: placeholder scan, consistency check, scope check, ambiguity check</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">HARD-GATE 硬门禁</span><span data-lang="en">HARD-GATE</span></strong><span data-lang="zh">：设计获批前禁止调用任何实现技能、编写代码或搭建项目</span><span data-lang="en">: no implementation skills, code, or project setup until design is approved</span></li>
+                    <li><strong><span data-lang="zh">渐进式验证</span><span data-lang="en">Progressive Validation</span></strong><span data-lang="zh">：一次一问的节奏确保用户始终在掌控中</span><span data-lang="en">: one-question-at-a-time pace keeps the user in control</span></li>
+                    <li><strong><span data-lang="zh">可视化伴侣</span><span data-lang="en">Visual Companion</span></strong><span data-lang="zh">：可选的浏览器可视化用于展示 mockup 和图表对比</span><span data-lang="en">: optional browser visualisation for mockups and chart comparisons</span></li>
+                </ul>
+            </div>
         </div>
-        <div class="gvr-phase">
-            <div class="phase-icon">🔧</div>
-            <h4>Revise</h4>
-            <p>Feed captured errors back into Generate. The loop continues until all assertions pass or max revision count is reached.</p>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">—</span>
+            <span data-lang="zh" style="color:var(--muted);font-size:0.8rem;">（纯提示技能，无额外依赖）</span>
+            <span data-lang="en" style="color:var(--muted);font-size:0.8rem;">(prompt-only skill, no extra dependencies)</span>
         </div>
     </div>
-    <div class="gvr-loop">↻ Iterates until all hard assertions PASS</div>
+
+    <!-- Skill 2: problem-analyzer -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>problem-analyzer</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S1</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v14</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">S1 阶段问题分析专家，实现 15 种问题类型自动识别、物理实体类型自动识别、等X约束自动检测、建模方法智能路由、第一性原理审查与硬断言生成。</span>
+            <span data-lang="en">S1 problem analysis expert, implementing 15-type problem classification, physical entity detection, equal-X constraint detection, intelligent method routing, first-principles audit, and hard assertion generation.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">15 种问题类型识别</span><span data-lang="en">15-Type Classification</span></strong><span data-lang="zh">：物理建模/优化决策/预测预报/综合评价/分类判别/聚类分析/信号处理/图像处理/经济建模/面板数据等</span><span data-lang="en">: physical modelling / optimisation / prediction / evaluation / classification / clustering / signal / image / economic / panel data, etc.</span></li>
+                    <li><strong><span data-lang="zh">物理实体识别</span><span data-lang="en">Physical Entity Detection</span></strong><span data-lang="zh">：飞行器/无人机、导弹/弹丸、烟幕弹、刚体链/绳索，自动提取约束方程</span><span data-lang="en">: aircraft/UAV, missile/projectile, smoke bomb, rigid body chain/rope, auto-extracting constraint equations</span></li>
+                    <li><strong><span data-lang="zh">等X约束检测</span><span data-lang="en">Equal-X Constraint Detection</span></strong><span data-lang="zh">：等高度/等速/等温/等压/等间距，自动生成硬断言</span><span data-lang="en">: equal-height/speed/temperature/pressure/distance, auto-generating hard assertions</span></li>
+                    <li><strong><span data-lang="zh">建模方法路由</span><span data-lang="en">Method Routing</span></strong><span data-lang="zh">：评价类(AHP/模糊/灰色关联/DEA)、预测类(SVM/混合效应/生存分析)、机理类(GAM/系统动力学/PINN)、优化类(强化学习/GA+fmincon)</span><span data-lang="en">: evaluation (AHP/fuzzy/grey/DEA), prediction (SVM/mixed-effects/survival), mechanistic (GAM/SD/PINN), optimisation (RL/GA+fmincon)</span></li>
+                    <li><strong><span data-lang="zh">ABC 题型路由</span><span data-lang="en">ABC Problem Routing</span></strong><span data-lang="zh">：A 题(物理/工程)、B 题(社会/经济/管理)、C 题(数据驱动，含 predict-t-optimize 两阶段)</span><span data-lang="en">: Problem A (physics/engineering), B (social/economic/management), C (data-driven, with predict-t-optimize)</span></li>
+                    <li><strong><span data-lang="zh">三层约束清单</span><span data-lang="en">Three-Layer Constraint Checklist</span></strong><span data-lang="zh">：物理约束→逻辑约束→优化约束</span><span data-lang="en">: physical → logical → optimisation constraints</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">方向向量维度验证</span><span data-lang="en">Direction Vector Validation</span></strong><span data-lang="zh">：等高度场景强制 z 分量为 0，避免维度错误</span><span data-lang="en">: enforces z-component = 0 for equal-height scenarios</span></li>
+                    <li><strong><span data-lang="zh">MILP 误判修复</span><span data-lang="en">MILP Fix</span></strong><span data-lang="zh">：v10 修复整数/离散变量检测层，防止 MILP 被误判为连续可微</span><span data-lang="en">: v10 fixes integer/discrete variable detection, preventing MILP misclassification</span></li>
+                    <li><strong><span data-lang="zh">输出参数范围估计</span><span data-lang="en">Output Range Estimation</span></strong><span data-lang="zh">：v9 为下游 S3/S4 提供预期范围，支持结果合理性判断</span><span data-lang="en">: v9 provides expected ranges for downstream S3/S4 feasibility checking</span></li>
+                    <li><strong><span data-lang="zh">假设自攻击测试</span><span data-lang="en">Self-Attack Testing</span></strong><span data-lang="zh">：自动挑战自身假设，提前发现脆弱点</span><span data-lang="en">: auto-challenges its own assumptions to find weak points early</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">—</span>
+            <span data-lang="zh" style="color:var(--muted);font-size:0.8rem;">（纯提示技能，输出传递给 S2/S3/S4）</span>
+            <span data-lang="en" style="color:var(--muted);font-size:0.8rem;">(prompt-only skill, outputs flow to S2/S3/S4)</span>
+        </div>
+    </div>
+
+    <!-- Skill 3: data-processing -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>data-processing</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S2</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v4</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">数学建模数据预处理专家，支持多格式加载、清洗、转换、报告生成。v2 增物理约束感知验证，v3 增经济数据质量检查，v4 增不平衡数据/图像/高维特征/信号处理。</span>
+            <span data-lang="en">Mathematical modelling data preprocessing expert, supporting multi-format loading, cleaning, transformation, and report generation. v2 adds physical-constraint-aware validation, v3 adds economic data quality checks, v4 adds imbalanced data/image/high-dimensional feature/signal processing.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">多格式加载</span><span data-lang="en">Multi-Format Loading</span></strong><span data-lang="zh">：Excel/CSV/TSV/TXT/JSON/MAT，自动检测编码与分隔符</span><span data-lang="en">: Excel/CSV/TSV/TXT/JSON/MAT, auto-detecting encoding and delimiters</span></li>
+                    <li><strong><span data-lang="zh">缺失值处理</span><span data-lang="en">Missing Value Handling</span></strong><span data-lang="zh">：11 种策略（drop/mean/median/mode/ffill/interpolate/knn/mice 等）</span><span data-lang="en">: 11 strategies (drop/mean/median/mode/ffill/interpolate/knn/mice, etc.)</span></li>
+                    <li><strong><span data-lang="zh">异常值检测</span><span data-lang="en">Outlier Detection</span></strong><span data-lang="zh">：IQR/zscore/percentile/physical_constraint/isolation_forest/LOF</span><span data-lang="en">: IQR/zscore/percentile/physical_constraint/isolation_forest/LOF</span></li>
+                    <li><strong><span data-lang="zh">物理约束验证</span><span data-lang="en">Physical Constraint Validation</span></strong><span data-lang="zh">：从 S1 获取硬断言，检查数据是否违反物理约束</span><span data-lang="en">: receives hard assertions from S1, checks data against physical constraints</span></li>
+                    <li><strong><span data-lang="zh">经济数据检查</span><span data-lang="en">Economic Data Checks</span></strong><span data-lang="zh">：ADF+KPSS 平稳性、季节性检测、通胀调整提醒、协整检验</span><span data-lang="en">: ADF+KPSS stationarity, seasonality detection, inflation adjustment, cointegration</span></li>
+                    <li><strong><span data-lang="zh">异构数据处理</span><span data-lang="en">Heterogeneous Data</span></strong><span data-lang="zh">：SMOTE/ADASYN 不平衡处理、图像预处理、LASSO/RFE 特征选择、小波去噪</span><span data-lang="en">: SMOTE/ADASYN imbalance, image preprocessing, LASSO/RFE feature selection, wavelet denoising</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">物理约束违规标记</span><span data-lang="en">Constraint Violation Flagging</span></strong><span data-lang="zh">：自动标记并写入报告，杜绝"厚度负值""反射率超 1"等物理无效数据</span><span data-lang="en">: auto-flags and reports, preventing physically invalid data like negative thickness or reflectance > 1</span></li>
+                    <li><strong><span data-lang="zh">防伪回归设计</span><span data-lang="en">Anti-Spurious-Regression</span></strong><span data-lang="zh">：经济数据预处理防伪回归、防名义值混淆、防忽略季节性</span><span data-lang="en">: economic data preprocessing prevents spurious regression, nominal value confusion, and seasonality omission</span></li>
+                    <li><strong><span data-lang="zh">数据泄漏防护</span><span data-lang="en">Data Leakage Prevention</span></strong><span data-lang="zh">：使用 imblearn.Pipeline 确保 SMOTE 仅在训练时生效</span><span data-lang="en">: uses imblearn.Pipeline to ensure SMOTE only applies during training</span></li>
+                    <li><strong><span data-lang="zh">链式 API</span><span data-lang="en">Chainable API</span></strong><span data-lang="zh">：<code>dp.load().clean().validate().normalize().smooth().report()</code></span><span data-lang="en">: <code>dp.load().clean().validate().normalize().smooth().report()</code></span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">pandas</span>
+            <span class="dep-tag">scipy</span>
+            <span class="dep-tag">scikit-learn</span>
+            <span class="dep-tag">imblearn</span>
+            <span class="dep-tag">opencv</span>
+            <span class="dep-tag">pywt</span>
+        </div>
+    </div>
+
+    <!-- Skill 4: mle-solver -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>mle-solver</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S3</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v9</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">数学建模计算求解器 v9，采用自主研发的 Generate-Verify-Revise 迭代架构，集成 S1 硬断言验证、物理一致性检查、模型-现实交叉验证三层检查机制，自动生成代码、执行、捕获错误、修正直至通过。</span>
+            <span data-lang="en">Mathematical modelling computational solver v9, featuring the independently developed Generate-Verify-Revise iterative architecture, integrating three-layer checks: S1 hard assertion verification, physical consistency check, and model-reality cross-validation. Auto-generates code, executes, captures errors, and revises until passing.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">GVR 三阶段迭代</span><span data-lang="en">GVR Three-Phase Iteration</span></strong><span data-lang="zh">：Generate→Verify→Revise 闭环</span><span data-lang="en">: Generate → Verify → Revise closed loop</span></li>
+                    <li><strong><span data-lang="zh">15 种问题类型路由</span><span data-lang="en">15-Type Method Routing</span></strong><span data-lang="zh">：评价类(AHP/模糊/灰色关联/DEA/组合赋权)、预测类(SVM/混合效应/生存分析/Optuna)、优化类(DQN/PPO/GA+fmincon)、机理类(GAM/系统动力学/PINN)</span><span data-lang="en">: evaluation (AHP/fuzzy/grey/DEA/composite), prediction (SVM/mixed-effects/survival/Optuna), optimisation (DQN/PPO/GA+fmincon), mechanistic (GAM/SD/PINN)</span></li>
+                    <li><strong><span data-lang="zh">三层检查机制</span><span data-lang="en">Three-Layer Checks</span></strong><span data-lang="zh">：S1 硬断言→物理一致性→模型-现实交叉验证</span><span data-lang="en">: S1 hard assertions → physical consistency → model-reality cross-validation</span></li>
+                    <li><strong><span data-lang="zh">启发式优化器</span><span data-lang="en">Heuristic Optimisers</span></strong><span data-lang="zh">：内置 GA/PSO/SA/DE，统一 <code>solve_optimization()</code> 入口</span><span data-lang="en">: built-in GA/PSO/SA/DE, unified <code>solve_optimization()</code> entry point</span></li>
+                    <li><strong><span data-lang="zh">v8 光学专项</span><span data-lang="en">v8 Optics Specialisation</span></strong><span data-lang="zh">：蒙特卡洛光线追迹(Möller-Trumbore)、同心圆密排、高斯光斑能量分布、PS10/Gemasolar 基准验证</span><span data-lang="en">: Monte-Carlo ray tracing (Möller-Trumbore), hexagonal packing, Gaussian spot energy, PS10/Gemasolar benchmarking</span></li>
+                    <li><strong><span data-lang="zh">v9 离散专项</span><span data-lang="en">v9 Discrete Specialisation</span></strong><span data-lang="zh">：整数约束强制检查、LCM 仿真视界完整性、多阶段随机控制预案</span><span data-lang="en">: integer constraint enforcement, LCM simulation horizon integrity, multi-stage stochastic control</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">HARD-GATE 硬门禁</span><span data-lang="en">HARD-GATE</span></strong><span data-lang="zh">：代码必须本地执行通过，任一检查未通过必须进入 Debug 回路</span><span data-lang="en">: code must pass local execution; any check failure forces the Debug loop</span></li>
+                    <li><strong><span data-lang="zh">反过拟合设计</span><span data-lang="en">Anti-Overfitting Design</span></strong><span data-lang="zh">：v8/v9 规则带题型互斥 Gate，A 题光学规则不误伤 B/C 题</span><span data-lang="en">: v8/v9 rules carry mutual-exclusion Gates; Problem A optics rules don't affect B/C problems</span></li>
+                    <li><strong><span data-lang="zh">闭环学习</span><span data-lang="en">Closed-Loop Learning</span></strong><span data-lang="zh">：失败时触发 systematic-debugging 并通知 problem-analyzer 反思</span><span data-lang="en">: on failure, triggers systematic-debugging and notifies problem-analyzer to reflect</span></li>
+                    <li><strong><span data-lang="zh">无魔法数字原则</span><span data-lang="en">No Magic Numbers</span></strong><span data-lang="zh">：v7 强制所有常量必须有物理来源或注释说明</span><span data-lang="en">: v7 enforces all constants must have physical provenance or annotations</span></li>
+                    <li><strong><span data-lang="zh">多方法交叉验证</span><span data-lang="en">Cross-Method Validation</span></strong><span data-lang="zh">：偏差>20% 自动触发排查</span><span data-lang="en">: deviation > 20% auto-triggers investigation</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">numpy</span>
+            <span class="dep-tag">scipy</span>
+            <span class="dep-tag">scikit-learn</span>
+            <span class="dep-tag">statsmodels</span>
+            <span class="dep-tag">pandas</span>
+        </div>
+    </div>
+
+    <!-- Skill 5: model-validation -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>model-validation</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S4</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v8</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">数学建模模型检验、灵敏度分析与不确定性分析 v8，基于 SALib + SciPy + Statsmodels + Scikit-learn 构建，产出论文级分析报告和验证类图表。</span>
+            <span data-lang="en">Mathematical modelling model validation, sensitivity analysis, and uncertainty analysis v8, built on SALib + SciPy + Statsmodels + Scikit-learn, producing publication-grade analysis reports and verification charts.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">灵敏度分析</span><span data-lang="en">Sensitivity Analysis</span></strong><span data-lang="zh">：OAT(快速定性)/Morris(初步筛选)/Sobol(精确量化，黄金标准)/FAST(非线性强)</span><span data-lang="en">: OAT (quick qualitative) / Morris (screening) / Sobol (precise quantification, gold standard) / FAST (strongly nonlinear)</span></li>
+                    <li><strong><span data-lang="zh">模型检验</span><span data-lang="en">Model Testing</span></strong><span data-lang="zh">：R²/RMSE/DW/VIF/条件数 + k-Fold/LOOCV/Bootstrap + 分类指标(Accuracy/F1/AUC-ROC) + 聚类指标(Silhouette/DB/CH)</span><span data-lang="en">: R²/RMSE/DW/VIF/condition + k-Fold/LOOCV/Bootstrap + classification metrics + clustering metrics</span></li>
+                    <li><strong><span data-lang="zh">不确定性分析</span><span data-lang="en">Uncertainty Analysis</span></strong><span data-lang="zh">：蒙特卡洛模拟、Bootstrap 置信区间、分布拟合</span><span data-lang="en">: Monte-Carlo simulation, Bootstrap CI, distribution fitting</span></li>
+                    <li><strong><span data-lang="zh">物理约束验证</span><span data-lang="en">Physical Constraint Validation</span></strong><span data-lang="zh">：连续遮蔽率、接力链物理上限、几何约束延续性、等X约束复查</span><span data-lang="en">: continuous coverage rate, relay chain physical limits, geometric constraint continuity, equal-X re-check</span></li>
+                    <li><strong><span data-lang="zh">经济计量诊断</span><span data-lang="en">Econometric Diagnostics</span></strong><span data-lang="zh">：自相关/异方差/多重共线性/内生性/平稳性/协整/结构突变/模型设定</span><span data-lang="en">: autocorrelation/heteroscedasticity/multicollinearity/endogeneity/stationarity/cointegration/structural break/specification</span></li>
+                    <li><strong><span data-lang="zh">六大验证策略</span><span data-lang="en">Six Validation Strategies</span></strong><span data-lang="zh">：排队论/博弈论/ODE-PDE/信号处理/图像处理/面板数据</span><span data-lang="en">: queueing/game theory/ODE-PDE/signal/image/panel data</span></li>
+                    <li><strong><span data-lang="zh">仿真视界完整性</span><span data-lang="en">Simulation Horizon Integrity</span></strong><span data-lang="zh">：LCM 检查(≥LCM×N_cycles)、预热期、运营期完整性</span><span data-lang="en">: LCM check (≥LCM×N_cycles), warm-up period, operational period integrity</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">八大模块全覆盖</span><span data-lang="en">Eight-Module Coverage</span></strong><span data-lang="zh">：从灵敏度到不确定性到物理/经济专项验证一站式完成</span><span data-lang="en">: one-stop coverage from sensitivity to uncertainty to physical/economic validation</span></li>
+                    <li><strong><span data-lang="zh">问题类型自动路由</span><span data-lang="en">Auto-Routing by Problem Type</span></strong><span data-lang="zh">：不同题型自动匹配验证方法</span><span data-lang="en">: automatically matches validation methods to problem types</span></li>
+                    <li><strong><span data-lang="zh">论文级图表产出</span><span data-lang="en">Publication-Grade Charts</span></strong><span data-lang="zh">：灵敏度龙卷风图、残差诊断图、蒙特卡洛分布图，可直接用于国赛/美赛论文</span><span data-lang="en">: sensitivity tornado plots, residual diagnostic plots, Monte-Carlo distribution plots—directly usable in papers</span></li>
+                    <li><strong><span data-lang="zh">外部基准验证</span><span data-lang="en">External Benchmark Validation</span></strong><span data-lang="zh">：A 题物理模型必须≥1 个实际工程案例对比(PS10/Gemasolar/Ivanpah)</span><span data-lang="en">: Problem A physical models must compare against ≥1 real engineering case</span></li>
+                    <li><strong><span data-lang="zh">跨方法一致性</span><span data-lang="en">Cross-Method Agreement</span></strong><span data-lang="zh">：多方法偏差>20% 自动触发排查</span><span data-lang="en">: multi-method deviation > 20% auto-triggers investigation</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">SALib</span>
+            <span class="dep-tag">scipy</span>
+            <span class="dep-tag">statsmodels</span>
+            <span class="dep-tag">scikit-learn</span>
+            <span class="dep-tag">linearmodels</span>
+        </div>
+    </div>
+
+    <!-- Skill 6: scipilot-figure -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>scipilot-figure</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S5</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v2</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">S5 主调度器。数学建模竞赛(CUMCM/MCM)专属数据可视化增强模块，强制生成所有适用图表类型，图表选择权完全交给用户。</span>
+            <span data-lang="en">S5 main dispatcher. CUMCM/MCM specialised data visualisation enhancement module, forcing generation of all applicable chart types with selection left entirely to the user.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">问题类型→图表路由</span><span data-lang="en">Problem→Chart Routing</span></strong><span data-lang="zh">：覆盖 14 种问题类型</span><span data-lang="en">: covers 14 problem types</span></li>
+                    <li><strong><span data-lang="zh">22 种图表清单</span><span data-lang="en">22-Chart Palette</span></strong><span data-lang="zh">：UNIVERSAL_CHART_PALETTE 逐项检查生成</span><span data-lang="en">: UNIVERSAL_CHART_PALETTE checked item by item</span></li>
+                    <li><strong><span data-lang="zh">超额供图机制</span><span data-lang="en">Over-Supply Mechanism</span></strong><span data-lang="zh">：必需图表≥12 张 + 候选图≥8 张 + README + selection_guide</span><span data-lang="en">: ≥12 essential + ≥8 candidate charts + README + selection guide</span></li>
+                    <li><strong><span data-lang="zh">CUMCM/MCM 双配置</span><span data-lang="en">Dual Configuration</span></strong><span data-lang="zh">：字体/配色/图题格式/分辨率规范</span><span data-lang="en">: font/colour/title format/resolution specs</span></li>
+                    <li><strong><span data-lang="zh">Python/MATLAB 双轨</span><span data-lang="en">Python/MATLAB Dual Track</span></strong><span data-lang="zh">：路由到 scipilot-figure-skill 或 matlab-figure</span><span data-lang="en">: routes to scipilot-figure-skill or matlab-figure</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">避免回溯</span><span data-lang="en">No Backtracking</span></strong><span data-lang="zh">：强制生成所有图表，避免 S6 写作阶段反复补充</span><span data-lang="en">: forces all charts upfront, avoiding repeated supplements during S6</span></li>
+                    <li><strong><span data-lang="zh">用户选择权</span><span data-lang="en">User Choice</span></strong><span data-lang="zh">：超额供图 + 选择指南，图表选择权完全交给用户</span><span data-lang="en">: over-supply + selection guide leaves chart choice to the user</span></li>
+                    <li><strong><span data-lang="zh">完整工具链</span><span data-lang="en">Complete Toolchain</span></strong><span data-lang="zh">：调度 diagram-generator/matlab-figure/nature-figure/model-validation</span><span data-lang="en">: dispatches diagram-generator/matlab-figure/nature-figure/model-validation</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">matplotlib</span>
+            <span class="dep-tag">seaborn</span>
+            <span class="dep-tag">plotly</span>
+            <span class="dep-tag">networkx</span>
+            <span class="dep-tag">SciencePlots</span>
+        </div>
+    </div>
+
+    <!-- Skill 7: mcm-paper-writing -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>mcm-paper-writing</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S6</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v5</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">MCM/ICM 英文与 CUMCM 中文数学建模竞赛论文写作技能，支持美赛与国赛双格式，宏变量机制确保所有数字与数据源一致。</span>
+            <span data-lang="en">MCM/ICM English and CUMCM Chinese mathematical modelling competition paper writing skill, supporting both formats, with a macro-variable mechanism ensuring all numbers are consistent with data sources.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">双格式支持</span><span data-lang="en">Dual Format</span></strong><span data-lang="zh">：MCM/ICM 英文 + CUMCM 中文，12 个强制章节</span><span data-lang="en">: MCM/ICM English + CUMCM Chinese, 12 mandatory sections</span></li>
+                    <li><strong><span data-lang="zh">国赛标准结构</span><span data-lang="en">CUMCM Standard Structure</span></strong><span data-lang="zh">：摘要→问题重述→问题分析→模型假设→符号说明→模型建立与求解(五步法)→模型检验→优缺点→参考文献→附录</span><span data-lang="en">: abstract → restatement → analysis → assumptions → symbols → modelling & solving (5-step) → validation → pros/cons → references → appendix</span></li>
+                    <li><strong><span data-lang="zh">ABC 题型差异化</span><span data-lang="en">ABC Differentiation</span></strong><span data-lang="zh">：A 题重公式推导 / B 题重方法论证 / C 题重数据处理</span><span data-lang="en">: Problem A emphasises derivation / B emphasises methodology / C emphasises data processing</span></li>
+                    <li><strong><span data-lang="zh">宏变量机制</span><span data-lang="en">Macro-Variable Mechanism</span></strong><span data-lang="zh">：paper_macros.json 单一真相源 + paper_number_validator.py 校验</span><span data-lang="en">: paper_macros.json single source of truth + paper_number_validator.py validation</span></li>
+                    <li><strong><span data-lang="zh">纯 Markdown 输出</span><span data-lang="en">Pure Markdown Output</span></strong><span data-lang="zh">：零样式控制，三线表/LaTeX 公式规范</span><span data-lang="en">: zero style control, three-line tables / LaTeX formula standards</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">国赛标准对齐</span><span data-lang="en">CUMCM Aligned</span></strong><span data-lang="zh">：五步法建模(预处理→建立→求解→检验→分析)</span><span data-lang="en">: five-step modelling (preprocess → build → solve → validate → analyse)</span></li>
+                    <li><strong><span data-lang="zh">杜绝捏造数据</span><span data-lang="en">No Fabricated Data</span></strong><span data-lang="zh">：宏变量机制确保所有数字与数据源一致，禁止手写任何数字</span><span data-lang="en">: macro-variable mechanism ensures all numbers match data sources, no manual number writing</span></li>
+                    <li><strong><span data-lang="zh">逐章写作指导</span><span data-lang="en">Chapter-by-Chapter Guidance</span></strong><span data-lang="zh">：集成 winning-paper-analysis 基于历年国一/O 奖论文</span><span data-lang="en">: integrates winning-paper-analysis based on historical award papers</span></li>
+                    <li><strong><span data-lang="zh">零样式污染</span><span data-lang="en">Zero Style Pollution</span></strong><span data-lang="zh">：输出纯净 Markdown/LaTeX，可直接粘贴到标准模板</span><span data-lang="en">: outputs clean Markdown/LaTeX, directly pasteable into standard templates</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">—</span>
+            <span data-lang="zh" style="color:var(--muted);font-size:0.8rem;">（纯提示技能，消费上游 S1-S5 输出）</span>
+            <span data-lang="en" style="color:var(--muted);font-size:0.8rem;">(prompt-only skill, consumes S1-S5 outputs)</span>
+        </div>
+    </div>
+
+    <!-- Skill 8: paper-review -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>paper-review</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S7</span>
+                <span class="meta-badge tier">T1</span>
+                <span class="meta-badge version">v4</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">基于历年优秀获奖论文训练的论文审阅专家，审阅 mcm-paper-writing 产出的论文的 9 类问题并自动优化或路由修复。质量守门员角色，CRITICAL 问题强制阻断。</span>
+            <span data-lang="en">Paper review expert trained on historical award-winning papers, reviewing mcm-paper-writing output across 9 dimensions, auto-fixing or routing repairs. Quality gatekeeper role—CRITICAL issues block delivery.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">9 维度审阅</span><span data-lang="en">9-Dimension Review</span></strong><span data-lang="zh">：①页数排版 ②图表质量 ③语言质量 ④内容完整性 ⑤一致性 ⑥获奖论文对标 ⑦模型验证完整性 ⑧问题类型对齐 ⑨经济建模完整性</span><span data-lang="en">: ①layout ②figure quality ③language ④completeness ⑤consistency ⑥award benchmarking ⑦validation completeness ⑧problem-type alignment ⑨economic modelling completeness</span></li>
+                    <li><strong><span data-lang="zh">自动修复</span><span data-lang="en">Auto-Fix</span></strong><span data-lang="zh">：可直接处理的排版/格式/语言问题</span><span data-lang="en">: directly handles layout/format/language issues</span></li>
+                    <li><strong><span data-lang="zh">问题路由</span><span data-lang="en">Problem Routing</span></strong><span data-lang="zh">：路由到上游技能(S1 重新分类/S2 数据补充/S3 模型修复/S4 验证补充/S5 图表重生成/S6 页数补充)</span><span data-lang="en">: routes to upstream skills (S1 reclassify/S2 data/S3 model/S4 validation/S5 figures/S6 pages)</span></li>
+                    <li><strong><span data-lang="zh">获奖论文对标</span><span data-lang="en">Award Benchmarking</span></strong><span data-lang="zh">：基于 O 奖/F 奖/国一论文质量基准</span><span data-lang="en">: benchmarks against O/F/national-first papers</span></li>
+                    <li><strong><span data-lang="zh">CRITICAL 阻断</span><span data-lang="en">CRITICAL Blocking</span></strong><span data-lang="zh">：严重问题必须修复才能通过审阅</span><span data-lang="en">: critical issues must be fixed to pass review</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">9 维度全覆盖</span><span data-lang="en">9-Dimension Coverage</span></strong><span data-lang="zh">：包含经济建模完整性(ADF/DW/VIF/协整/稳健性检验)</span><span data-lang="en">: includes economic modelling completeness (ADF/DW/VIF/cointegration/robustness)</span></li>
+                    <li><strong><span data-lang="zh">全 Pipeline 闭环</span><span data-lang="en">Full-Pipeline Loop</span></strong><span data-lang="zh">：问题路由机制实现闭环修复，不孤立审阅</span><span data-lang="en">: problem routing achieves closed-loop repair, not isolated review</span></li>
+                    <li><strong><span data-lang="zh">严重程度分级</span><span data-lang="en">Severity Grading</span></strong><span data-lang="zh">：CRITICAL/HIGH/MEDIUM/LOW 四级，含具体行号引用</span><span data-lang="en">: CRITICAL/HIGH/MEDIUM/LOW four levels with specific line references</span></li>
+                    <li><strong><span data-lang="zh">备份机制</span><span data-lang="en">Backup Mechanism</span></strong><span data-lang="zh">：优化后论文保留原始备份</span><span data-lang="en">: preserves original backup of optimised paper</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">—</span>
+            <span data-lang="zh" style="color:var(--muted);font-size:0.8rem;">（调用 winning-paper-analysis 获取基准）</span>
+            <span data-lang="en" style="color:var(--muted);font-size:0.8rem;">(calls winning-paper-analysis for benchmarks)</span>
+        </div>
+    </div>
+
 </section>
 
-<!-- ==================== QUICKSTART ==================== -->
-<section class="section" id="quickstart">
-    <h2 class="section-title">Quickstart</h2>
-    <p class="section-subtitle">Get started in three lines of Python.</p>
-    <div class="code-block">
-<pre><span class="cmt"># Install</span>
-pip install -e <span class="str">".[full]"</span>
+<!-- ==================== Tier 2 Detailed Skills ==================== -->
+<section>
+    <div class="section-label">Tier 2 / 可视化专项</div>
+    <div class="skill-section-header">
+        <h2>
+            <span data-lang="zh">Tier 2 — 可视化专项技能</span>
+            <span data-lang="en">Tier 2 — Visualisation Specialists</span>
+        </h2>
+        <span class="tier-tag tier-2">4 Skills</span>
+    </div>
 
-<span class="cmt"># Load skills and run the pipeline</span>
+    <!-- Skill 9: scipilot-figure-skill -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>scipilot-figure-skill</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S5</span>
+                <span class="meta-badge tier">T2</span>
+                <span class="meta-badge version">v2.1</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">科研数据可视化顾问——定位不是"画图工具"而是"可视化顾问"。先做数据剖析再推荐图型，主动拦截科研画图经典错误，产出 Nature/Science/IEEE/PNAS 期刊级图表。</span>
+            <span data-lang="en">Research data visualisation advisor—positioned not as a "drawing tool" but as a "visualisation consultant". Profiles data before recommending chart types, proactively intercepts classic research plotting errors, and produces Nature/Science/IEEE/PNAS journal-grade figures.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">8 步工作流</span><span data-lang="en">8-Step Workflow</span></strong><span data-lang="zh">：理解任务→剖析数据→选图→查期刊规范→配环境→绘制→自检闭环→导出</span><span data-lang="en">: understand → profile → select → check specs → configure → plot → self-check → export</span></li>
+                    <li><strong><span data-lang="zh">数据剖析</span><span data-lang="en">Data Profiling</span></strong><span data-lang="zh">：列类型/样本量/分布/异常值/分组结构/相关性矩阵/初步图型建议</span><span data-lang="en">: column type/sample size/distribution/outliers/grouping/correlation/initial chart suggestions</span></li>
+                    <li><strong><span data-lang="zh">18 条禁忌拦截</span><span data-lang="en">18 Pitfall Interceptions</span></strong><span data-lang="zh">：小样本均值柱、双 Y 轴、饼图、Y 轴截断、rainbow 色图、分类点连折线等</span><span data-lang="en">: small-sample mean bars, dual Y-axis, pie charts, Y-axis truncation, rainbow colour maps, connecting categorical points with lines, etc.</span></li>
+                    <li><strong><span data-lang="zh">三层自检闭环</span><span data-lang="en">Three-Layer Self-Check</span></strong><span data-lang="zh">：语义层+形式层+视觉层(渲染 PNG→程序自检缺字/裁切→AI 读图复核→回改重渲)</span><span data-lang="en">: semantic + formal + visual (render PNG → auto-check missing glyphs/cropping → AI review → re-render)</span></li>
+                    <li><strong><span data-lang="zh">中英文双语</span><span data-lang="en">Bilingual Support</span></strong><span data-lang="zh">：中文期刊"宋体正文+Times New Roman 数字"混排</span><span data-lang="en">: Chinese journal "Songti body + Times New Roman digits" mixed typesetting</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">判断先于画图</span><span data-lang="en">Think Before Drawing</span></strong><span data-lang="zh">：首要能力是判断该用什么图，而非单纯绘制</span><span data-lang="en">: primary capability is determining which chart to use, not just drawing</span></li>
+                    <li><strong><span data-lang="zh">主动拦截错误</span><span data-lang="en">Proactive Error Interception</span></strong><span data-lang="zh">：即使用户指定不当图型也会善意指出并给替代方案</span><span data-lang="en">: even if the user specifies an inappropriate chart, it kindly points this out and suggests alternatives</span></li>
+                    <li><strong><span data-lang="zh">投稿级质量</span><span data-lang="en">Submission-Grade Quality</span></strong><span data-lang="zh">：默认色盲安全配色+冗余编码+灰度预览</span><span data-lang="en">: colour-blind-safe palette + redundant encoding + grayscale preview by default</span></li>
+                    <li><strong><span data-lang="zh">多格式导出</span><span data-lang="en">Multi-Format Export</span></strong><span data-lang="zh">：PDF/SVG/PNG 矢量图+灰度预览</span><span data-lang="en">: PDF/SVG/PNG vector + grayscale preview</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">matplotlib≥3.7</span>
+            <span class="dep-tag">seaborn≥0.13</span>
+            <span class="dep-tag">plotly≥5.18</span>
+            <span class="dep-tag">pandas≥2.0</span>
+            <span class="dep-tag">Pillow≥10.0</span>
+        </div>
+    </div>
+
+    <!-- Skill 10: diagram-generator -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>diagram-generator</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S5</span>
+                <span class="meta-badge tier">T2</span>
+                <span class="meta-badge version">v3</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">生成精确的算法流程图、框架图、模型架构图、Pipeline 流程图，基于 matplotlib.patches 实现像素级精确控制。与 scipilot-figure-skill 严格分工——本技能做结构图，前者做数据图。</span>
+            <span data-lang="en">Generates precise algorithm flowcharts, framework diagrams, model architecture diagrams, and pipeline flow diagrams, based on matplotlib.patches for pixel-level control. Strictly complementary to scipilot-figure-skill—this skill does structural diagrams, the former does data charts.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">算法流程图</span><span data-lang="en">Algorithm Flowcharts</span></strong><span data-lang="zh">：每模型至少 1 张，结合本题变量标注，步骤清晰 1-5 步</span><span data-lang="en">: at least 1 per model, with problem-specific variable annotations, clear 1-5 steps</span></li>
+                    <li><strong><span data-lang="zh">决策分支图</span><span data-lang="en">Decision Branch Diagrams</span></strong><span data-lang="zh">：含判断节点的条件分支流程</span><span data-lang="en">: conditional branch flows with decision nodes</span></li>
+                    <li><strong><span data-lang="zh">迭代循环图</span><span data-lang="en">Iteration Loop Diagrams</span></strong><span data-lang="zh">：展示迭代/循环逻辑</span><span data-lang="en">: visualises iteration/loop logic</span></li>
+                    <li><strong><span data-lang="zh">框架图/架构图</span><span data-lang="en">Framework/Architecture</span></strong><span data-lang="zh">：v3 统一使用 matplotlib.patches 像素级精确控制</span><span data-lang="en">: v3 uniformly uses matplotlib.patches for pixel-level control</span></li>
+                    <li><strong><span data-lang="zh">双后端</span><span data-lang="en">Dual Backend</span></strong><span data-lang="zh">：mermaid(快速文本) + matplotlib.patches(精确矢量)</span><span data-lang="en">: mermaid (quick text) + matplotlib.patches (precise vector)</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">像素级精确</span><span data-lang="en">Pixel-Level Precision</span></strong><span data-lang="zh">：阴影/渐变/彩色 accent bar/自定义曲线箭头</span><span data-lang="en">: shadows/gradients/coloured accent bars/custom curved arrows</span></li>
+                    <li><strong><span data-lang="zh">严格分工</span><span data-lang="en">Strict Division</span></strong><span data-lang="zh">：与 scipilot-figure-skill 互补，不重叠</span><span data-lang="en">: complementary to scipilot-figure-skill, no overlap</span></li>
+                    <li><strong><span data-lang="zh">中文完美支持</span><span data-lang="en">Chinese Support</span></strong><span data-lang="zh">：Noto Sans CJK SC，矢量图输出</span><span data-lang="en">: Noto Sans CJK SC, vector output</span></li>
+                    <li><strong><span data-lang="zh">统一接口</span><span data-lang="en">Unified Interface</span></strong><span data-lang="zh">：<code>generate_diagram()</code> 支持 algorithm 等多种类型</span><span data-lang="en">: <code>generate_diagram()</code> supports algorithm and other types</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">matplotlib</span>
+            <span class="dep-tag">mermaid</span>
+        </div>
+    </div>
+
+    <!-- Skill 11: matlab-figure -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>matlab-figure</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S5</span>
+                <span class="meta-badge tier">T2</span>
+                <span class="meta-badge version">v1</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">MATLAB 数学建模竞赛专属绘图模块，覆盖三维曲面、热力图、向量场、误差棒、填充区域、文本标注，支持 Simulink 系统动力学建模和 Vensim 集成。</span>
+            <span data-lang="en">MATLAB mathematical modelling competition specialised plotting module, covering 3-D surfaces, heatmaps, vector fields, error bars, filled regions, and text annotations, supporting Simulink system dynamics modelling and Vensim integration.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">三维曲面</span><span data-lang="en">3-D Surfaces</span></strong><span data-lang="zh">：surf/mesh/meshc/meshz</span><span data-lang="en">: surf/mesh/meshc/meshz</span></li>
+                    <li><strong><span data-lang="zh">热力图与向量场</span><span data-lang="en">Heatmaps & Vector Fields</span></strong><span data-lang="zh">：pcolor/imagesc/heatmap + quiver/quiver3/streamline</span><span data-lang="en">: pcolor/imagesc/heatmap + quiver/quiver3/streamline</span></li>
+                    <li><strong><span data-lang="zh">误差棒与填充</span><span data-lang="en">Error Bars & Fills</span></strong><span data-lang="zh">：errorbar + patch/fill/fill3(置信区间)</span><span data-lang="en">: errorbar + patch/fill/fill3 (confidence intervals)</span></li>
+                    <li><strong><span data-lang="zh">专业色标</span><span data-lang="en">Professional Colormaps</span></strong><span data-lang="zh">：parula(Nature 推荐，感知均匀、色盲友好)</span><span data-lang="en">: parula (Nature recommended, perceptually uniform, colour-blind friendly)</span></li>
+                    <li><strong><span data-lang="zh">系统动力学</span><span data-lang="en">System Dynamics</span></strong><span data-lang="zh">：Simulink 建模 + Vensim 数据互导</span><span data-lang="en">: Simulink modelling + Vensim data integration</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">补足 Python 短板</span><span data-lang="en">Fills Python Gaps</span></strong><span data-lang="zh">：parula 色标、quiver 在 surf 上 overlay 是 MATLAB 独有优势</span><span data-lang="en">: parula colormap and quiver overlay on surf are MATLAB-unique advantages</span></li>
+                    <li><strong><span data-lang="zh">系统动力学全链路</span><span data-lang="en">Full SD Pipeline</span></strong><span data-lang="zh">：Simulink 建模 + Vensim 数据互导</span><span data-lang="en">: Simulink modelling + Vensim data integration</span></li>
+                    <li><strong><span data-lang="zh">论文级导出</span><span data-lang="en">Publication Export</span></strong><span data-lang="zh">：PNG/EPS/PDF/SVG，≥300 DPI + 中文字体支持</span><span data-lang="en">: PNG/EPS/PDF/SVG, ≥300 DPI + Chinese font support</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">MATLAB</span>
+            <span class="dep-tag">Simulink</span>
+            <span class="dep-tag">Vensim</span>
+        </div>
+    </div>
+
+    <!-- Skill 12: nature-figure -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>nature-figure</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S5</span>
+                <span class="meta-badge tier">T2</span>
+                <span class="meta-badge version">v2</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">面向 Nature/高影响力期刊的投稿级图表工作流（Python 或 R），并可选支持 OpenRouter GPT Image 2 生成手稿示意图/图形摘要/机制图。</span>
+            <span data-lang="en">Nature / high-impact journal submission-grade figure workflow (Python or R), with optional OpenRouter GPT Image 2 support for generating manuscript schematics / graphical abstracts / mechanism diagrams.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">Route A: Python/R 期刊级排版</span><span data-lang="en">Route A: Python/R Journal Layout</span></strong><span data-lang="zh">：matplotlib/seaborn 或 ggplot2/patchwork/ComplexHeatmap</span><span data-lang="en">: matplotlib/seaborn or ggplot2/patchwork/ComplexHeatmap</span></li>
+                    <li><strong><span data-lang="zh">Route B: AI 示意图</span><span data-lang="en">Route B: AI Schematics</span></strong><span data-lang="zh">：OpenRouter GPT Image 2 生成草稿级示意图/图形摘要</span><span data-lang="en">: OpenRouter GPT Image 2 generates draft schematics / graphical abstracts</span></li>
+                    <li><strong><span data-lang="zh">多面板组合</span><span data-lang="en">Multi-Panel Composition</span></strong><span data-lang="zh">：字体/字号/线宽精确控制，目标期刊格式适配</span><span data-lang="en">: precise font/size/linewidth control, target journal format adaptation</span></li>
+                    <li><strong><span data-lang="zh">静态/动态分层</span><span data-lang="en">Static/Dynamic Layering</span></strong><span data-lang="zh">：static/ 版本化复用片段 + 动态路由按需加载</span><span data-lang="en">: static/ versioned reusable snippets + dynamic routing on-demand loading</span></li>
+                    <li><strong><span data-lang="zh">5 步路由协议</span><span data-lang="en">5-Step Routing Protocol</span></strong><span data-lang="zh">：manifest.yaml + backend gate + 按需 references</span><span data-lang="en">: manifest.yaml + backend gate + on-demand references</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">版本化可审查</span><span data-lang="en">Versioned & Auditable</span></strong><span data-lang="zh">：静态层版本化，2600+ 行深度参考按需加载</span><span data-lang="en">: static layer versioned, 2600+ lines of deep references loaded on demand</span></li>
+                    <li><strong><span data-lang="zh">Backend Gate</span><span data-lang="en">Backend Gate</span></strong><span data-lang="zh">：Python/R 独占，保存用户偏好避免重复询问</span><span data-lang="en">: Python/R exclusive, saves user preference to avoid repeated asking</span></li>
+                    <li><strong><span data-lang="zh">与 scipilot-figure-skill 互补</span><span data-lang="en">Complementary</span></strong><span data-lang="zh">：前者"判断该用什么图"，本 skill 做"期刊级精细化排版"</span><span data-lang="en">: the former "determines which chart", this skill does "journal-grade fine layout"</span></li>
+                    <li><strong><span data-lang="zh">AI 示意图</span><span data-lang="en">AI Schematics</span></strong><span data-lang="zh">：可选 GPT Image 2 生成非定量机制图</span><span data-lang="en">: optional GPT Image 2 for non-quantitative mechanism diagrams</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">matplotlib</span>
+            <span class="dep-tag">seaborn</span>
+            <span class="dep-tag">ggplot2 (R)</span>
+            <span class="dep-tag">OpenRouter API</span>
+        </div>
+    </div>
+
+</section>
+
+<!-- ==================== Tier 3 Detailed Skills ==================== -->
+<section>
+    <div class="section-label">Tier 3 / 写作与评审辅助</div>
+    <div class="skill-section-header">
+        <h2>
+            <span data-lang="zh">Tier 3 — 写作与评审辅助技能</span>
+            <span data-lang="en">Tier 3 — Writing & Review Aids</span>
+        </h2>
+        <span class="tier-tag tier-3">3 Skills</span>
+    </div>
+
+    <!-- Skill 13: winning-paper-analysis -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>winning-paper-analysis</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S6</span>
+                <span class="meta-badge tier">T3</span>
+                <span class="meta-badge version">v1</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">分析历年国赛/美赛优秀获奖论文的写作模式、章节结构、篇幅分配和表达风格，为 mcm-paper-writing 提供系统性的写作指导。基于 personqianduixue/Math_Model 仓库（6.3k+ stars）。</span>
+            <span data-lang="en">Analyses writing patterns, chapter structures, proportion allocation, and expression styles of historical CUMCM/MCM award-winning papers, providing systematic writing guidance for mcm-paper-writing. Based on personqianduixue/Math_Model repository (6.3k+ stars).</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">国一与国二差距分析</span><span data-lang="en">National-First vs Second Analysis</span></strong><span data-lang="zh">：六大"降维打击"特征(问题分析细腻/模型有理有据/公式密度高/图表丰富/检验全面/排版赏心悦目)</span><span data-lang="en">: six "dimensional strike" features (detailed analysis / well-founded models / high formula density / rich charts / comprehensive validation / pleasing layout)</span></li>
+                    <li><strong><span data-lang="zh">章节级精析</span><span data-lang="en">Chapter-Level Analysis</span></strong><span data-lang="zh">：摘要/问题重述/问题分析/模型假设/模型建立/模型检验/优缺点/结论/参考文献/附录，到"每段写什么"</span><span data-lang="en">: abstract/restatement/analysis/assumptions/modelling/validation/pros&cons/conclusion/references/appendix, down to "what each paragraph should contain"</span></li>
+                    <li><strong><span data-lang="zh">摘要黄金法则</span><span data-lang="en">Abstract Golden Rules</span></strong><span data-lang="zh">：决定 80% 评奖结果，具体到句子模板</span><span data-lang="en">: determines 80% of award results, specific to sentence templates</span></li>
+                    <li><strong><span data-lang="zh">公式推导黄金法则</span><span data-lang="en">Formula Derivation Rules</span></strong><span data-lang="zh">：≥25 条，每个公式后跟解释</span><span data-lang="en">: ≥25 rules, each formula followed by explanation</span></li>
+                    <li><strong><span data-lang="zh">MCM O 奖分析</span><span data-lang="en">MCM O-Award Analysis</span></strong><span data-lang="zh">：COMAP 2025 评审标准、5+3 摘要结构、六大核心要素、中英文禁止表达 25 条</span><span data-lang="en">: COMAP 2025 review criteria, 5+3 abstract structure, six core elements, 25 banned expressions</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">大规模语料</span><span data-lang="en">Large-Scale Corpus</span></strong><span data-lang="zh">：1992-2021 国赛题+论文、美赛官方论文、2004-2018 评阅要点、30+ 篇获奖经验</span><span data-lang="en">: 1992-2021 CUMCM problems+papers, MCM official papers, 2004-2018 review points, 30+ award experience articles</span></li>
+                    <li><strong><span data-lang="zh">双标准覆盖</span><span data-lang="en">Dual Standards</span></strong><span data-lang="zh">：国赛国一(0.5%-0.61% 获奖率) + 美赛 O 奖(前 0.5%-1%)</span><span data-lang="en">: CUMCM national-first (0.5%-0.61%) + MCM O-award (top 0.5%-1%)</span></li>
+                    <li><strong><span data-lang="zh">句子级模板</span><span data-lang="en">Sentence-Level Templates</span></strong><span data-lang="zh">：好/差对比，可操作性强</span><span data-lang="en">: good/bad comparisons, highly actionable</span></li>
+                    <li><strong><span data-lang="zh">2025 新增维度</span><span data-lang="en">2025 New Dimension</span></strong><span data-lang="zh">：含"伦理考量"维度</span><span data-lang="en">: includes "ethical considerations" dimension</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">—</span>
+            <span data-lang="zh" style="color:var(--muted);font-size:0.8rem;">（本地论文库 + GitHub 语料）</span>
+            <span data-lang="en" style="color:var(--muted);font-size:0.8rem;">(local paper library + GitHub corpus)</span>
+        </div>
+    </div>
+
+    <!-- Skill 14: reference-manager -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>reference-manager</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">S6</span>
+                <span class="meta-badge tier">T3</span>
+                <span class="meta-badge version">v1</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">参考文献自动格式化管理器，支持 GB/T 7714（国赛）/ APA（美赛）格式自动生成、正文引用标记、参考文献列表排序、DOI/URL 完整性检查。</span>
+            <span data-lang="en">Automated reference formatting manager, supporting GB/T 7714 (CUMCM) / APA (MCM) format generation, in-text citation marks, reference list sorting, and DOI/URL completeness checks.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">GB/T 7714 格式化</span><span data-lang="en">GB/T 7714 Formatting</span></strong><span data-lang="zh">：国赛标准，覆盖期刊[J]/专著[M]/学位论文[D]/标准[S]/电子文献[EB/OL]/会议[C]/专利[P]/报告[R]</span><span data-lang="en">: CUMCM standard, covering journal/book/thesis/standard/electronic/conference/patent/report</span></li>
+                    <li><strong><span data-lang="zh">APA 格式化</span><span data-lang="en">APA Formatting</span></strong><span data-lang="zh">：美赛标准，含 DOI</span><span data-lang="en">: MCM standard, with DOI</span></li>
+                    <li><strong><span data-lang="zh">正文引用标记</span><span data-lang="en">In-Text Citations</span></strong><span data-lang="zh">：<code>[1]</code> 或 <code>(Author, Year)</code>，支持 cite/cite_range</span><span data-lang="en">: <code>[1]</code> or <code>(Author, Year)</code>, supports cite/cite_range</span></li>
+                    <li><strong><span data-lang="zh">批量添加与排序</span><span data-lang="en">Batch Add & Sort</span></strong><span data-lang="zh">：<code>batch_add()</code> + 自动排序</span><span data-lang="en">: <code>batch_add()</code> + auto-sorting</span></li>
+                    <li><strong><span data-lang="zh">完整性验证</span><span data-lang="en">Completeness Validation</span></strong><span data-lang="zh">：数量≥8、格式正确、类型覆盖、正文引用与列表一一对应</span><span data-lang="en">: count≥8, correct format, type coverage, in-text-list correspondence</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">双格式一键切换</span><span data-lang="en">One-Click Format Switch</span></strong><span data-lang="zh">：<code>format="gbt7714"</code> / <code>"apa"</code></span><span data-lang="en">: <code>format="gbt7714"</code> / <code>"apa"</code></span></li>
+                    <li><strong><span data-lang="zh">四项自动验证</span><span data-lang="en">Four Auto-Checks</span></strong><span data-lang="zh">：count_ok / format_ok / types_ok / citations_match</span><span data-lang="en">: count_ok / format_ok / types_ok / citations_match</span></li>
+                    <li><strong><span data-lang="zh">缺失引用检测</span><span data-lang="en">Missing Citation Detection</span></strong><span data-lang="zh">：<code>find_missing_citations()</code> 核对正文与列表</span><span data-lang="en">: <code>find_missing_citations()</code> cross-checks text vs list</span></li>
+                    <li><strong><span data-lang="zh">推荐模板</span><span data-lang="en">Recommended Templates</span></strong><span data-lang="zh">：10 篇推荐(2 教材+4-6 期刊+1-2 专著+1-2 标准)</span><span data-lang="en">: 10 recommended (2 textbooks + 4-6 journals + 1-2 books + 1-2 standards)</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">Python stdlib</span>
+        </div>
+    </div>
+
+    <!-- Skill 15: systematic-debugging -->
+    <div class="skill-card">
+        <div class="skill-card-header">
+            <h3>systematic-debugging</h3>
+            <div class="skill-meta">
+                <span class="meta-badge stage">aux</span>
+                <span class="meta-badge tier">T3</span>
+                <span class="meta-badge version">v4</span>
+            </div>
+        </div>
+        <p class="skill-desc">
+            <span data-lang="zh">系统化调试方法，铁律"无根因不修复"。v4 新增通用反模式库（魔法数字/方法分歧/盲传结果/阈值遮蔽/过度平滑/假设漂移），三层反模式库覆盖物理、经济、通用领域。</span>
+            <span data-lang="en">Systematic debugging method, iron rule "NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST". v4 adds a universal anti-pattern library (magic numbers / method divergence / blind-passed results / threshold masking / over-smoothing / assumption drift), with three-layer anti-pattern libraries covering physical, economic, and universal domains.</span>
+        </p>
+        <div class="skill-body">
+            <div class="skill-col">
+                <h4><span data-lang="zh">核心功能</span><span data-lang="en">Core Functions</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">四阶段调试流程</span><span data-lang="en">Four-Phase Debugging</span></strong><span data-lang="zh">：根因调查→模式分析→假说测试→实施修复，每阶段必须完成才能进入下一阶段</span><span data-lang="en">: root cause → pattern analysis → hypothesis testing → fix implementation, each phase must complete before the next</span></li>
+                    <li><strong><span data-lang="zh">v2 物理反模式库</span><span data-lang="en">v2 Physical Anti-Patterns</span></strong><span data-lang="zh">：弧长代弦长/连续近似离散/线性化失效/隐式约束遗漏/量纲不一致/对称性破坏等 7 类</span><span data-lang="en">: arc-length-as-chord / continuous-approximates-discrete / linearisation failure / implicit constraint omission / dimensional inconsistency / symmetry breaking, 7 types</span></li>
+                    <li><strong><span data-lang="zh">v3 经济反模式库</span><span data-lang="en">v3 Economic Anti-Patterns</span></strong><span data-lang="zh">：伪回归/内生性忽略/名义值混淆/忽略时间价值/幸存者偏差/异方差/多重共线性/结构突变/Granger 因果误用等 12 类</span><span data-lang="en">: spurious regression / endogeneity / nominal value confusion / time value omission / survivorship bias / heteroscedasticity / multicollinearity / structural break / Granger causality misuse, 12 types</span></li>
+                    <li><strong><span data-lang="zh">v4 通用反模式库</span><span data-lang="en">v4 Universal Anti-Patterns</span></strong><span data-lang="zh">：魔法数字/方法分歧/盲传结果/阈值遮蔽/过度平滑/假设漂移 6 类</span><span data-lang="en">: magic numbers / method divergence / blind-passed results / threshold masking / over-smoothing / assumption drift, 6 types</span></li>
+                    <li><strong><span data-lang="zh">经济计量诊断流程</span><span data-lang="en">Econometric Diagnostics</span></strong><span data-lang="zh">：ADF→残差诊断→VIF→Hausman→Chow→Ramsey RESET</span><span data-lang="en">: ADF → residual diagnostics → VIF → Hausman → Chow → Ramsey RESET</span></li>
+                </ul>
+            </div>
+            <div class="skill-col">
+                <h4><span data-lang="zh">关键优势</span><span data-lang="en">Key Advantages</span></h4>
+                <ul>
+                    <li><strong><span data-lang="zh">铁律强制</span><span data-lang="en">Iron Rule Enforcement</span></strong><span data-lang="zh">："无根因不修复"，杜绝症状式修补</span><span data-lang="en">: "no fixes without root cause", eliminates symptom-based patching</span></li>
+                    <li><strong><span data-lang="zh">三层反模式库</span><span data-lang="en">Three-Layer Anti-Patterns</span></strong><span data-lang="zh">：物理+经济+通用，覆盖几乎所有建模场景</span><span data-lang="en">: physical + economic + universal, covering virtually all modelling scenarios</span></li>
+                    <li><strong><span data-lang="zh">深度集成</span><span data-lang="en">Deep Integration</span></strong><span data-lang="zh">：与 mle-solver(S3)/model-validation(S4)/problem-analyzer(S1) 自动触发联动</span><span data-lang="en">: auto-triggered by mle-solver(S3)/model-validation(S4)/problem-analyzer(S1)</span></li>
+                    <li><strong><span data-lang="zh">解析解交叉验证</span><span data-lang="en">Analytical Cross-Validation</span></strong><span data-lang="zh">：用解析解验证数值解，确保正确性</span><span data-lang="en">: validates numerical solutions against analytical solutions</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="skill-deps">
+            <span class="skill-deps-label"><span data-lang="zh">依赖</span><span data-lang="en">Deps</span></span>
+            <span class="dep-tag">scipy</span>
+            <span class="dep-tag">statsmodels</span>
+        </div>
+    </div>
+
+</section>
+
+<!-- ==================== Quickstart ==================== -->
+<section>
+    <div class="section-label">Quickstart / 快速开始</div>
+    <h2 class="section-title">
+        <span data-lang="zh">三步上手</span>
+        <span data-lang="en">Get Started in Three Steps</span>
+    </h2>
+    <p class="section-subtitle">
+        <span data-lang="zh">安装库、加载技能、运行流水线——全程零配置。</span>
+        <span data-lang="en">Install the library, load skills, run the pipeline—zero configuration throughout.</span>
+    </p>
+    <div class="qs-grid">
+        <div class="qs-card">
+            <h3>1. <span data-lang="zh">安装</span><span data-lang="en">Install</span></h3>
+            <div class="code-block">
+<span class="cmt"># Core only (no heavy deps)</span>
+<span class="kw">pip</span> install -e .
+
+<span class="cmt"># Full (all scientific deps)</span>
+<span class="kw">pip</span> install -e <span class="str">".[full]"</span>
+
+<span class="cmt"># Selective extras</span>
+<span class="kw">pip</span> install -e <span class="str">".[solver,viz,validation]"</span>
+            </div>
+        </div>
+        <div class="qs-card">
+            <h3>2. <span data-lang="zh">加载单个技能</span><span data-lang="en">Load a Skill</span></h3>
+            <div class="code-block">
 <span class="kw">from</span> mathmod_pilot.core <span class="kw">import</span> MathModPilotAgent
 
 agent = <span class="fn">MathModPilotAgent</span>()
 <span class="fn">print</span>(agent.<span class="fn">list_skills</span>())
-<span class="cmt"># ['brainstorming', 'data-processing', ..., 'systematic-debugging']</span>
+<span class="cmt"># ['brainstorming', 'data-processing', ...]</span>
 
-<span class="cmt"># Run the full S0 → S7 pipeline</span>
+result = agent.<span class="fn">run_skill</span>(<span class="str">"problem-analyzer"</span>, {
+    <span class="str">"problem_text"</span>: <span class="str">"Determine optimal solar mirrors..."</span>,
+})
+            </div>
+        </div>
+        <div class="qs-card">
+            <h3>3. <span data-lang="zh">运行完整流水线</span><span data-lang="en">Run Full Pipeline</span></h3>
+            <div class="code-block">
+<span class="kw">from</span> mathmod_pilot.core <span class="kw">import</span> MathModPilotAgent
+
+agent = <span class="fn">MathModPilotAgent</span>()
+
 results = agent.<span class="fn">run_pipeline</span>({
     <span class="str">"problem_text"</span>: <span class="str">"2023 CUMCM Problem A: ..."</span>,
     <span class="str">"data_path"</span>: <span class="str">"data.xlsx"</span>,
-})</pre>
+})
+
+<span class="kw">for</span> name, out <span class="kw">in</span> results.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="str">f"{name:25s} -> {out.get('status')}"</span>)
+            </div>
+        </div>
+    </div>
+    <div class="callout">
+        <p>
+            <strong><span data-lang="zh">提示：</span><span data-lang="en">Tip:</span></strong>
+            <span data-lang="zh">Python 3.10+ 必须。仅 PyYAML 为硬依赖，所有科学计算库均为可选 extras，技能在后端缺失时自动降级。</span>
+            <span data-lang="en">Python 3.10+ required. Only PyYAML is a hard dependency; all scientific libraries are optional extras—skills degrade gracefully when backends are absent.</span>
+        </p>
     </div>
 </section>
 
-<!-- ==================== FOOTER ==================== -->
-<footer class="footer">
-    <p>
-        <a href="https://github.com/Fatespur/mathmod-pilot" target="_blank">GitHub Repository</a> ·
-        <a href="https://github.com/Fatespur/mathmod-pilot#readme" target="_blank">README</a> ·
-        <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/ACKNOWLEDGEMENTS.md" target="_blank">Acknowledgements</a> ·
-        <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/LICENSE" target="_blank">MIT License</a>
-    </p>
-    <p style="margin-top: 1rem;">© 2026 MathMod-Pilot Contributors · Built with ❤️ for mathematical modelling</p>
+<!-- ==================== Footer ==================== -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="https://github.com/Fatespur/mathmod-pilot" target="_blank">GitHub</a>
+            <a href="https://github.com/Fatespur/mathmod-pilot#installation" target="_blank">
+                <span data-lang="zh">安装指南</span>
+                <span data-lang="en">Installation</span>
+            </a>
+            <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/ACKNOWLEDGEMENTS.md" target="_blank">
+                <span data-lang="zh">致谢</span>
+                <span data-lang="en">Acknowledgements</span>
+            </a>
+            <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/CITATION.cff" target="_blank">
+                <span data-lang="zh">引用</span>
+                <span data-lang="en">Citation</span>
+            </a>
+            <a href="https://github.com/Fatespur/mathmod-pilot/blob/main/LICENSE" target="_blank">MIT License</a>
+        </div>
+        <div class="footer-copy">
+            <p><strong>MathMod-Pilot</strong> · v1.0.0 · MIT License</p>
+            <p>
+                <span data-lang="zh">由 <strong>Ye Jiahui (William)</strong> 开发 · 福州大学孟子国际工程学院</span>
+                <span data-lang="en">Developed by <strong>Ye Jiahui (William)</strong> · Fuzhou University Mencius International Engineering College</span>
+            </p>
+            <p>
+                <span data-lang="zh">15 个技能 · 8 阶段流水线 · Generate-Verify-Revise 迭代架构</span>
+                <span data-lang="en">15 Skills · 8-Stage Pipeline · Generate-Verify-Revise Iterative Architecture</span>
+            </p>
+        </div>
+    </div>
 </footer>
+
+<script>
+// ==================== Language Switching ====================
+function setLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    try { localStorage.setItem('mathmod-pilot-lang', lang); } catch(e) {}
+    // Update html lang attribute
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+}
+
+// Load saved language preference
+(function() {
+    let savedLang = 'zh';
+    try { savedLang = localStorage.getItem('mathmod-pilot-lang') || 'zh'; } catch(e) {}
+    setLang(savedLang);
+})();
+
+// ==================== Scroll Reveal ====================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.stat-card, .arch-card, .skill-card, .pipeline-content, .gvr-phase, .qs-card').forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+});
+</script>
 
 </body>
 </html>
