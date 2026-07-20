@@ -3,8 +3,8 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Code Style: Ruff](https://img.shields.io/badge/Code%20Style-Ruff-261230.svg)](https://docs.astral.sh/ruff/)
-[![Skills: 15](https://img.shields.io/badge/Skills-15-success.svg)](#skill-matrix--技能矩阵)
-[![Pipeline: S0–S7](https://img.shields.io/badge/Pipeline-S0%E2%80%93S7-informational.svg)](#system-architecture--系统架构)
+[![Skills: 15](https://img.shields.io/badge/Skills-15-success.svg)](#skill-matrix)
+[![Pipeline: S0–S7](https://img.shields.io/badge/Pipeline-S0%E2%80%93S7-informational.svg)](#system-architecture)
 
 **[English](#english)** | **[中文](#中文)**
 
@@ -23,7 +23,7 @@
 MathMod-Pilot packages **15 specialised skills** — each a self-contained folder with
 a native `SKILL.md` prompt and a Python entry point — into a single installable
 library. Skills are discovered dynamically at run-time: dropping a new folder
-into `src/scipilot/skills/` is all that is needed to extend the agent.
+into `src/mathmod_pilot/skills/` is all that is needed to extend the agent.
 
 ## Table of Contents
 
@@ -40,18 +40,18 @@ into `src/scipilot/skills/` is all that is needed to extend the agent.
 ## System Architecture
 
 MathMod-Pilot follows a **dynamic plugin architecture**: the core agent does not
-hard-code any skill. Instead, it scans `src/scipilot/skills/` at import time,
+hard-code any skill. Instead, it scans `src/mathmod_pilot/skills/` at import time,
 imports each skill's `skill.py`, and registers the first `BaseSkill` subclass
 it finds.
 
 ### Directory Layout
 
 ```
-scipilot/
-├── src/scipilot/
+mathmod-pilot/
+├── src/mathmod_pilot/
 │   ├── __init__.py              # version & lazy exports
 │   ├── core/
-│   │   └── agent.py             # MathMod-PilotAgent — registry + pipeline runner
+│   │   └── agent.py             # MathModPilotAgent — registry + pipeline runner
 │   └── skills/
 │       ├── base.py              # BaseSkill (ABC) + PromptSkill
 │       ├── __init__.py          # discover_skills() — dynamic scanner
@@ -303,7 +303,7 @@ as follows:
   year         = 2026,
   version      = {1.0.0},
   license      = {MIT},
-  url          = {https://github.com/mathmod-pilot/mathmod-pilot},
+  url          = {https://github.com/Fatespur/mathmod-pilot},
 }
 ```
 
@@ -329,7 +329,7 @@ original copyright notices.
 
 MathMod-Pilot 将 **15 个专业技能**——每个技能都是一个独立的文件夹，包含原生
 `SKILL.md` 提示词和 Python 执行入口——打包为一个可安装的库。技能在运行时
-动态发现：只需将新文件夹放入 `src/scipilot/skills/` 即可扩展 Agent。
+动态发现：只需将新文件夹放入 `src/mathmod_pilot/skills/` 即可扩展 Agent。
 
 ## 目录
 
@@ -346,17 +346,17 @@ MathMod-Pilot 将 **15 个专业技能**——每个技能都是一个独立的�
 ## 系统架构
 
 MathMod-Pilot 采用**动态插件架构**：核心 Agent 不硬编码任何技能。而是在导入时
-扫描 `src/scipilot/skills/` 目录，导入每个技能的 `skill.py`，并注册找到的
+扫描 `src/mathmod_pilot/skills/` 目录，导入每个技能的 `skill.py`，并注册找到的
 第一个 `BaseSkill` 子类。
 
 ### 目录结构
 
 ```
-scipilot/
-├── src/scipilot/
+mathmod-pilot/
+├── src/mathmod_pilot/
 │   ├── __init__.py              # 版本号与延迟导出
 │   ├── core/
-│   │   └── agent.py             # MathMod-PilotAgent — 注册表 + 流水线运行器
+│   │   └── agent.py             # MathModPilotAgent — 注册表 + 流水线运行器
 │   └── skills/
 │       ├── base.py              # BaseSkill (ABC) + PromptSkill
 │       ├── __init__.py          # discover_skills() — 动态扫描器
@@ -589,7 +589,7 @@ MathMod-Pilot 整合了多个开源项目和研究贡献。完整的归因表—
   year         = 2026,
   version      = {1.0.0},
   license      = {MIT},
-  url          = {https://github.com/mathmod-pilot/mathmod-pilot},
+  url          = {https://github.com/Fatespur/mathmod-pilot},
 }
 ```
 

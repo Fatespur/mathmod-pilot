@@ -1,6 +1,6 @@
 # Acknowledgements & Credits
 
-SciPilot is an open-source project that builds upon and integrates work from
+MathMod-Pilot is an open-source project that builds upon and integrates work from
 multiple sources. This file provides transparent attribution for every skill
 shipped in the library, in accordance with their respective licenses.
 
@@ -26,7 +26,7 @@ shipped in the library, in accordance with their respective licenses.
 
 ## Third-Party Dependencies
 
-SciPilot skills rely on the following open-source Python libraries at runtime
+MathMod-Pilot skills rely on the following open-source Python libraries at runtime
 (declared as optional extras in `pyproject.toml`):
 
 | Library | License | Used By |

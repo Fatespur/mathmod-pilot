@@ -4,7 +4,7 @@
 所有算法返回 (最优解, 最优值, 收敛历史) 三元组
 
 Original-Source : MathMod-Pilot Project
-Repository      : https://github.com/scipilot/mathmod_pilot
+Repository      : https://github.com/Fatespur/mathmod-pilot
 License         : MIT
 """
 from __future__ import annotations

@@ -2,7 +2,7 @@
 MathMod-Pilot Skill: mle-solver
 --------------------------------------------------
 Original Source / Inspiration: MathMod-Pilot Project (original work)
-Repository: https://github.com/scipilot/mathmod_pilot
+Repository: https://github.com/Fatespur/mathmod-pilot
 License: MIT License
 
 Author: Ye Jiahui (William)

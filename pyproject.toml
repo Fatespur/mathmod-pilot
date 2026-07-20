@@ -80,9 +80,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mathmod-pilot/mathmod-pilot"
-Repository = "https://github.com/mathmod-pilot/mathmod-pilot"
-Documentation = "https://github.com/mathmod-pilot/mathmod-pilot#readme"
+Homepage = "https://github.com/Fatespur/mathmod-pilot"
+Repository = "https://github.com/Fatespur/mathmod-pilot"
+Documentation = "https://github.com/Fatespur/mathmod-pilot#readme"
 
 [tool.setuptools.packages.find]
 where = ["src"]
