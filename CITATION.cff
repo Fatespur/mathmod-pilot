@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: "MathMod-Pilot: An Agent-Native Skill Library for Mathematical Modelling Competitions"
+message: "If you use SciPilot in your research or competition work, please cite it as below."
+type: software
+authors:
+  - alias: "MathMod-Pilot Contributors"
+repository-code: "https://github.com/mathmod-pilot/mathmod-pilot"
+license: MIT
+version: "1.0.0"
+date-released: "2026-07-20"
+keywords:
+  - mathematical modelling
+  - agent
+  - skill
+  - CUMCM
+  - MCM
+  - optimization
+  - scientific visualization
+abstract: >-
+  SciPilot packages 15 specialised skills -- each a self-contained folder with
+  a native SKILL.md prompt and a Python entry point -- that together cover the
+  full CUMCM/MCM pipeline from problem analysis and data processing through
+  model solving, validation, visualisation, paper writing and final review.
+preferred-citation:
+  type: software
+  title: "MathMod-Pilot: An Agent-Native Skill Library for Mathematical Modelling Competitions"
+  authors:
+    - alias: "MathMod-Pilot Contributors"
+  year: 2026
+  repository-code: "https://github.com/mathmod-pilot/mathmod-pilot"
+  license: MIT
+  version: "1.0.0"

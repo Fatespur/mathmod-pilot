@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment & secrets
+.env
+.env.local
+
+# Generated outputs (figures, reports, data)
+outputs/
+figures/
+*.png
+*.pdf
+*.svg
+!src/scipilot/skills/**/assets/**/*.png
+!src/scipilot/skills/**/assets/**/*.pdf
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb

@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mathmod-pilot"
+version = "1.0.0"
+description = "Agent-Native skill library for mathematical modelling competitions (CUMCM/MCM), covering the full pipeline from problem analysis to paper review."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "SciPilot Contributors"},
+]
+keywords = [
+    "mathematical-modelling",
+    "agent",
+    "skill",
+    "cumcm",
+    "mcm",
+    "optimization",
+    "visualization",
+    "scientific-computing",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+solver = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-learn>=1.3",
+]
+viz = [
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "plotly>=5.18",
+    "Pillow>=10.0",
+    "pandas>=2.0",
+    "SciencePlots>=2.1",
+]
+validation = [
+    "SALib>=1.4",
+    "statsmodels>=0.14",
+]
+schematic = [
+    "requests>=2.31",
+]
+full = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-learn>=1.3",
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "plotly>=5.18",
+    "Pillow>=10.0",
+    "pandas>=2.0",
+    "SciencePlots>=2.1",
+    "SALib>=1.4",
+    "statsmodels>=0.14",
+    "requests>=2.31",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/mathmod-pilot/mathmod-pilot"
+Repository = "https://github.com/mathmod-pilot/mathmod-pilot"
+Documentation = "https://github.com/mathmod-pilot/mathmod-pilot#readme"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"mathmod_pilot.skills" = [
+    "**/SKILL.md",
+    "**/*.md",
+    "**/*.yaml",
+    "**/*.yml",
+    "**/*.json",
+    "**/*.txt",
+    "**/*.version"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
