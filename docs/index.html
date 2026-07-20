@@ -8,25 +8,29 @@
 <style>
 /* ==================== Design System ==================== */
 :root {
-    --bg: #0f172a;
-    --bg2: #1e293b;
-    --bg3: #334155;
-    --ink: #f1f5f9;
-    --muted: #94a3b8;
-    --accent: #6366f1;
-    --accent2: #8b5cf6;
-    --accent3: #06b6d4;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --rule: rgba(148, 163, 184, 0.15);
-    --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
-    --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-    --glass: rgba(30, 41, 59, 0.6);
+    --bg: #0a0e1a;
+    --bg2: #141a35;
+    --bg3: #252d5c;
+    --ink: #fef3f7;
+    --muted: #a5b4d8;
+    --accent: #ff3d8e;
+    --accent2: #ffa726;
+    --accent3: #4ade80;
+    --accent4: #38bdf8;
+    --accent5: #c084fc;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --rule: rgba(165, 180, 216, 0.18);
+    --gradient: linear-gradient(135deg, #ff3d8e 0%, #c084fc 35%, #38bdf8 70%, #4ade80 100%);
+    --gradient-warm: linear-gradient(135deg, #fbbf24 0%, #fb7185 50%, #c084fc 100%);
+    --gradient-pink: linear-gradient(135deg, #ff3d8e 0%, #fb7185 100%);
+    --gradient-cyan: linear-gradient(135deg, #38bdf8 0%, #4ade80 100%);
+    --glass: rgba(20, 26, 53, 0.65);
     --radius: 16px;
     --radius-sm: 10px;
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+    --shadow: 0 4px 24px rgba(255, 61, 142, 0.12);
+    --shadow-lg: 0 8px 40px rgba(192, 132, 252, 0.18);
     --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
 }
 
@@ -98,9 +102,11 @@ body[data-lang="zh"] [data-lang="en"] { display: none !important; }
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.10) 0%, transparent 50%);
+    background: radial-gradient(circle at 20% 30%, rgba(255, 61, 142, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 75% 25%, rgba(192, 132, 252, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 60% 70%, rgba(56, 189, 248, 0.20) 0%, transparent 45%),
+                radial-gradient(circle at 30% 80%, rgba(74, 222, 128, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 60%, rgba(251, 191, 36, 0.15) 0%, transparent 40%);
     animation: float 20s ease-in-out infinite;
 }
 
@@ -185,11 +191,11 @@ body[data-lang="zh"] [data-lang="en"] { display: none !important; }
     background: var(--bg2);
 }
 
-.hero-badge-item.python { color: #3776AB; }
-.hero-badge-item.license { color: var(--success); }
-.hero-badge-item.skills { color: var(--accent); }
-.hero-badge-item.pipeline { color: var(--accent3); }
-.hero-badge-item.style { color: var(--accent2); }
+.hero-badge-item.python { color: #ffd43b; background: rgba(255, 212, 59, 0.1); }
+.hero-badge-item.license { color: var(--accent3); background: rgba(74, 222, 128, 0.1); }
+.hero-badge-item.skills { color: var(--accent); background: rgba(255, 61, 142, 0.1); }
+.hero-badge-item.pipeline { color: var(--accent4); background: rgba(56, 189, 248, 0.1); }
+.hero-badge-item.style { color: var(--accent5); background: rgba(192, 132, 252, 0.1); }
 
 .hero-cta {
     display: flex;
@@ -249,7 +255,10 @@ section {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--accent3);
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: 16px;
     font-family: var(--mono);
 }
@@ -460,7 +469,10 @@ section {
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 8px;
-    color: var(--accent3);
+    background: var(--gradient-cyan);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .pipeline-content .skill-name {
@@ -574,7 +586,10 @@ th {
     padding: 16px 20px;
     text-align: left;
     font-weight: 700;
-    color: var(--accent3);
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     border-bottom: 2px solid var(--accent);
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -604,9 +619,9 @@ tbody tr:hover {
     font-weight: 700;
 }
 
-.tier-1 { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
-.tier-2 { background: rgba(139, 92, 246, 0.2); color: var(--accent2); }
-.tier-3 { background: rgba(6, 182, 212, 0.2); color: var(--accent3); }
+.tier-1 { background: rgba(255, 61, 142, 0.2); color: var(--accent); border: 1px solid rgba(255, 61, 142, 0.3); }
+.tier-2 { background: rgba(192, 132, 252, 0.2); color: var(--accent5); border: 1px solid rgba(192, 132, 252, 0.3); }
+.tier-3 { background: rgba(56, 189, 248, 0.2); color: var(--accent4); border: 1px solid rgba(56, 189, 248, 0.3); }
 
 /* ==================== Skill Detail Cards ==================== */
 .skill-section {
@@ -659,6 +674,10 @@ tbody tr:hover {
 .skill-card-header h3 {
     font-size: 1.4rem;
     font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .skill-meta {
@@ -677,9 +696,9 @@ tbody tr:hover {
     color: var(--muted);
 }
 
-.meta-badge.version { color: var(--warning); }
-.meta-badge.stage { color: var(--accent3); }
-.meta-badge.tier { color: var(--accent2); }
+.meta-badge.version { color: var(--warning); background: rgba(251, 191, 36, 0.12); }
+.meta-badge.stage { color: var(--accent4); background: rgba(56, 189, 248, 0.12); }
+.meta-badge.tier { color: var(--accent5); background: rgba(192, 132, 252, 0.12); }
 
 .skill-desc {
     font-size: 1.05rem;
@@ -699,7 +718,10 @@ tbody tr:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--accent3);
+    background: var(--gradient-pink);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: 14px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--rule);
@@ -754,8 +776,9 @@ tbody tr:hover {
     border-radius: 6px;
     font-size: 0.8rem;
     font-family: var(--mono);
-    background: var(--bg3);
-    color: var(--accent3);
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent4);
+    border: 1px solid rgba(56, 189, 248, 0.25);
 }
 
 /* ==================== Quickstart ==================== */
@@ -777,7 +800,10 @@ tbody tr:hover {
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 16px;
-    color: var(--accent3);
+    background: var(--gradient-warm);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ==================== Footer ==================== */
@@ -809,7 +835,7 @@ footer {
 }
 
 .footer-links a:hover {
-    color: var(--accent3);
+    color: var(--accent);
 }
 
 .footer-copy {
@@ -820,7 +846,7 @@ footer {
 
 /* ==================== Callout ==================== */
 .callout {
-    background: rgba(99, 102, 241, 0.08);
+    background: linear-gradient(135deg, rgba(255, 61, 142, 0.10) 0%, rgba(192, 132, 252, 0.08) 50%, rgba(56, 189, 248, 0.06) 100%);
     border-left: 4px solid var(--accent);
     border-radius: var(--radius-sm);
     padding: 20px 24px;
