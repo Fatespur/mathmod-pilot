@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MathMod-Pilot bilingual project introduction — an agent-native skill library for mathematical modelling competitions.">
+  <meta name="theme-color" content="#07111f">
+  <title>MathMod-Pilot | Bilingual Introduction</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(13, 27, 48, .78);
+      --panel-solid: #0d1b30;
+      --panel-soft: #112440;
+      --text: #f5f8ff;
+      --muted: #aab8cd;
+      --line: rgba(164, 190, 224, .16);
+      --blue: #59a8ff;
+      --cyan: #57e2d2;
+      --violet: #a685ff;
+      --amber: #ffcb6b;
+      --green: #67e7a3;
+      --danger: #ff7f91;
+      --radius: 22px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .30);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(89, 168, 255, .16), transparent 30rem),
+        radial-gradient(circle at 92% 20%, rgba(166, 133, 255, .13), transparent 28rem),
+        radial-gradient(circle at 48% 88%, rgba(87, 226, 210, .10), transparent 34rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; }
+    button { font: inherit; }
+    code { font-family: var(--mono); }
+    [data-copy][hidden] { display: none !important; }
+
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: rgba(7, 17, 31, .72);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(89, 168, 255, .38);
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(89, 168, 255, .22), rgba(87, 226, 210, .10));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14);
+      color: var(--cyan);
+      font-family: var(--mono);
+    }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .lang-toggle {
+      display: flex;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+    }
+    .lang-toggle button {
+      border: 0;
+      border-radius: 999px;
+      padding: 7px 13px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .lang-toggle button.active {
+      color: #07111f;
+      background: var(--cyan);
+    }
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+    }
+    .github-link:hover { color: var(--text); border-color: rgba(89,168,255,.45); }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      align-items: center;
+      padding: 88px 0 74px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 54px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 9px;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 7px 12px;
+      border: 1px solid rgba(87,226,210,.28);
+      border-radius: 999px;
+      color: var(--cyan);
+      background: rgba(87,226,210,.07);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(103,231,163,.10);
+    }
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(3rem, 7vw, 6.6rem);
+      line-height: .94;
+      letter-spacing: -.07em;
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, #ffffff 5%, #9bc9ff 45%, #61e7d7 92%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-lead {
+      max-width: 760px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 2vw, 1.35rem);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 34px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--blue); color: #06101d; }
+    .btn-secondary { border-color: var(--line); background: rgba(255,255,255,.04); color: var(--text); }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 26px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
+    .hero-meta b { color: var(--text); }
+
+    .terminal {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(147, 183, 227, .20);
+      border-radius: 24px;
+      background: linear-gradient(160deg, rgba(17,36,64,.96), rgba(9,21,39,.96));
+      box-shadow: var(--shadow);
+    }
+    .terminal::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -100px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(87,226,210,.10);
+      filter: blur(8px);
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font: 12px var(--mono);
+    }
+    .dots { display: flex; gap: 7px; }
+    .dots i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+    .dots i:nth-child(1) { background: var(--danger); }
+    .dots i:nth-child(2) { background: var(--amber); }
+    .dots i:nth-child(3) { background: var(--green); }
+    .terminal-body { padding: 25px 24px 28px; font: 14px/1.85 var(--mono); }
+    .terminal-body .dim { color: #7186a2; }
+    .terminal-body .key { color: var(--blue); }
+    .terminal-body .str { color: var(--cyan); }
+    .terminal-body .ok { color: var(--green); }
+    .terminal-body .warn { color: var(--amber); }
+    .terminal-output {
+      margin-top: 22px;
+      display: grid;
+      gap: 10px;
+    }
+    .terminal-row {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255,255,255,.025);
+    }
+    .terminal-row b { color: var(--blue); }
+    .terminal-row small { color: var(--muted); }
+    .terminal-row em { color: var(--green); font-style: normal; font-size: 12px; }
+
+    section { padding: 96px 0; }
+    .section-head { max-width: 780px; margin-bottom: 42px; }
+    .kicker { color: var(--cyan); font: 800 13px var(--mono); letter-spacing: .10em; text-transform: uppercase; }
+    h2 { margin: 12px 0 0; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; letter-spacing: -.045em; }
+    .section-copy { margin-top: 17px; color: var(--muted); font-size: 1.08rem; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .metric {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .metric strong { display: block; font-size: 2.45rem; line-height: 1; letter-spacing: -.05em; }
+    .metric span { display: block; margin-top: 10px; color: var(--muted); }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+    .stage {
+      min-height: 190px;
+      position: relative;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(150deg, rgba(17,36,64,.86), rgba(9,21,39,.84));
+      overflow: hidden;
+    }
+    .stage::before {
+      content: attr(data-stage);
+      position: absolute;
+      right: 14px;
+      top: 4px;
+      color: rgba(255,255,255,.045);
+      font: 800 4rem var(--mono);
+    }
+    .stage-no { color: var(--cyan); font: 800 13px var(--mono); }
+    .stage h3 { margin: 15px 0 8px; font-size: 1.08rem; }
+    .stage p { margin: 0; color: var(--muted); font-size: .92rem; }
+
+    .mechanism-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 22px; align-items: stretch; }
+    .loop-card, .feature-card, .code-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+    .loop-card { padding: 30px; }
+    .loop {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .loop-node {
+      min-height: 130px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255,255,255,.035);
+    }
+    .loop-node b { display: block; font-size: 1.05rem; }
+    .loop-node span { display: block; margin-top: 6px; color: var(--muted); font-size: .84rem; }
+    .loop-arrow { color: var(--cyan); font-size: 1.4rem; }
+    .loop-return {
+      margin-top: 18px;
+      padding: 11px 14px;
+      border: 1px dashed rgba(87,226,210,.30);
+      border-radius: 12px;
+      color: var(--cyan);
+      text-align: center;
+      font: 700 13px var(--mono);
+    }
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .feature-card { padding: 24px; }
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #07111f;
+      background: var(--blue);
+      font-weight: 900;
+    }
+    .feature-card:nth-child(2) .feature-icon { background: var(--cyan); }
+    .feature-card:nth-child(3) .feature-icon { background: var(--violet); }
+    .feature-card:nth-child(4) .feature-icon { background: var(--amber); }
+    .feature-card h3 { margin: 16px 0 8px; }
+    .feature-card p { margin: 0; color: var(--muted); font-size: .94rem; }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .skill-group {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+    .skill-group-head { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+    .skill-group-head span { color: var(--cyan); font: 800 12px var(--mono); }
+    .skill-group h3 { margin: 0; font-size: 1.2rem; }
+    .skill-list { display: grid; gap: 10px; margin-top: 20px; }
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.035);
+      color: #dbe8fa;
+      font: 13px var(--mono);
+    }
+    .skill-item small { color: var(--muted); }
+
+    .quickstart { display: grid; grid-template-columns: .88fr 1.12fr; gap: 24px; align-items: center; }
+    .quickstart-copy ul { margin: 24px 0 0; padding: 0; list-style: none; display: grid; gap: 13px; }
+    .quickstart-copy li { display: flex; gap: 11px; color: var(--muted); }
+    .quickstart-copy li::before { content: "✓"; color: var(--green); font-weight: 900; }
+    .code-card { overflow: hidden; box-shadow: var(--shadow); }
+    .code-head { display: flex; justify-content: space-between; align-items: center; padding: 13px 17px; border-bottom: 1px solid var(--line); color: var(--muted); font: 12px var(--mono); }
+    .copy-btn { border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; color: var(--muted); background: rgba(255,255,255,.035); cursor: pointer; }
+    pre { margin: 0; padding: 23px; overflow: auto; color: #d7e7fb; font: 13px/1.75 var(--mono); }
+    .code-comment { color: #6f829d; }
+    .code-key { color: #9fc8ff; }
+    .code-str { color: #75eadc; }
+
+    .cta {
+      padding: 46px;
+      border: 1px solid rgba(89,168,255,.28);
+      border-radius: 28px;
+      background:
+        linear-gradient(120deg, rgba(89,168,255,.15), rgba(87,226,210,.08)),
+        var(--panel-solid);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+    .cta h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); }
+    .cta p { margin: 12px 0 0; color: var(--muted); }
+    footer { padding: 34px 0 46px; color: var(--muted); font-size: 14px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 22px; border-top: 1px solid var(--line); padding-top: 28px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .mechanism-grid, .quickstart { grid-template-columns: 1fr; }
+      .terminal { max-width: 760px; }
+      .metrics, .pipeline { grid-template-columns: repeat(2, 1fr); }
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 26px, 1180px); }
+      .github-link { display: none; }
+      .hero { padding-top: 60px; }
+      h1 { font-size: clamp(3rem, 18vw, 5rem); }
+      section { padding: 72px 0; }
+      .metrics, .pipeline, .features { grid-template-columns: 1fr; }
+      .loop { grid-template-columns: 1fr; }
+      .loop-arrow { transform: rotate(90deg); text-align: center; }
+      .cta, .footer-inner { align-items: flex-start; flex-direction: column; }
+      .cta { padding: 30px 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body data-lang="zh">
+  <nav class="nav">
+    <div class="shell nav-inner">
+      <a class="brand" href="#top" aria-label="MathMod-Pilot home">
+        <span class="brand-mark">Mπ</span>
+        <span>MathMod-Pilot</span>
+      </a>
+      <div class="nav-actions">
+        <a class="github-link" href="https://github.com/Fatespur/mathmod-pilot" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <div class="lang-toggle" aria-label="Language selector">
+          <button id="lang-zh" class="active" type="button">中文</button>
+          <button id="lang-en" type="button">EN</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span data-copy="zh">面向数学建模竞赛的 Agent-Native 技能库</span><span data-copy="en" hidden>Agent-native skills for mathematical modelling</span></div>
+          <h1><span class="gradient-text">MathMod-<br>Pilot</span></h1>
+          <p class="hero-lead" data-copy="zh">把问题分析、数据处理、模型求解、验证、可视化、论文写作与评审组织成一条可扩展的 S0–S7 智能流水线。</p>
+          <p class="hero-lead" data-copy="en" hidden>Organise problem analysis, data processing, model solving, validation, visualisation, paper writing and review into one extensible S0–S7 intelligent pipeline.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#quickstart"><span data-copy="zh">立即开始</span><span data-copy="en" hidden>Get started</span> →</a>
+            <a class="btn btn-secondary" href="#pipeline"><span data-copy="zh">查看工作流</span><span data-copy="en" hidden>Explore pipeline</span></a>
+          </div>
+          <div class="hero-meta">
+            <span><b>15</b><span data-copy="zh">专业技能</span><span data-copy="en" hidden>specialised skills</span></span>
+            <span><b>8</b><span data-copy="zh">核心阶段</span><span data-copy="en" hidden>core stages</span></span>
+            <span><b>Python 3.10+</b></span>
+            <span><b>MIT</b></span>
+          </div>
+        </div>
+
+        <div class="terminal" aria-label="Pipeline preview">
+          <div class="terminal-bar"><div class="dots"><i></i><i></i><i></i></div><span>mathmod-pilot / pipeline</span></div>
+          <div class="terminal-body">
+            <div><span class="dim">$</span> <span class="key">pilot.run_pipeline</span>(<span class="str">"competition_problem"</span>)</div>
+            <div class="terminal-output">
+              <div class="terminal-row"><b>S1</b><small>problem-analyzer</small><em>ROUTED</em></div>
+              <div class="terminal-row"><b>S2</b><small>data-processing</small><em>CLEAN</em></div>
+              <div class="terminal-row"><b>S3</b><small>mle-solver</small><em>VERIFIED</em></div>
+              <div class="terminal-row"><b>S4</b><small>model-validation</small><em>PASS</em></div>
+              <div class="terminal-row"><b>S6</b><small>mcm-paper-writing</small><em>DRAFTED</em></div>
+              <div class="terminal-row"><b>S7</b><small>paper-review</small><em>READY</em></div>
+            </div>
+            <div style="margin-top:18px"><span class="ok">✓</span> <span data-copy="zh">结果、图表与论文上下文已贯通</span><span data-copy="en" hidden>Results, figures and paper context are connected</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="metrics">
+          <div class="metric"><strong>15</strong><span data-copy="zh">可动态发现的技能</span><span data-copy="en" hidden>Dynamically discovered skills</span></div>
+          <div class="metric"><strong>S0–S7</strong><span data-copy="zh">完整竞赛流水线</span><span data-copy="en" hidden>Complete contest pipeline</span></div>
+          <div class="metric"><strong>3×</strong><span data-copy="zh">生成、验证、修正闭环</span><span data-copy="en" hidden>Generate, verify, revise loop</span></div>
+          <div class="metric"><strong>1</strong><span data-copy="zh">统一上下文对象</span><span data-copy="en" hidden>Unified context object</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Pipeline / 流水线</div>
+          <h2 data-copy="zh">从题目到论文，逐阶段推进</h2>
+          <h2 data-copy="en" hidden>Move from prompt to paper, stage by stage</h2>
+          <p class="section-copy" data-copy="zh">每个技能接收前序阶段产生的上下文，并将结构化结果继续传递。核心 Agent 不硬编码技能，新增目录即可扩展能力。</p>
+          <p class="section-copy" data-copy="en" hidden>Each skill receives the context produced upstream and passes structured results forward. The core agent hard-codes no skills, so a new folder can extend the system.</p>
+        </div>
+        <div class="pipeline">
+          <article class="stage" data-stage="S0"><div class="stage-no">S0</div><h3>Brainstorming</h3><p data-copy="zh">澄清目标、约束、输出和整体执行路线。</p><p data-copy="en" hidden>Clarify goals, constraints, outputs and the execution route.</p></article>
+          <article class="stage" data-stage="S1"><div class="stage-no">S1</div><h3>Problem Analyzer</h3><p data-copy="zh">拆解问题、识别题型、路由方法并生成硬断言。</p><p data-copy="en" hidden>Decompose the problem, route methods and generate hard assertions.</p></article>
+          <article class="stage" data-stage="S2"><div class="stage-no">S2</div><h3>Data Processing</h3><p data-copy="zh">加载多格式数据，完成清洗、校验与物理约束检查。</p><p data-copy="en" hidden>Load multi-format data, clean it and check physical constraints.</p></article>
+          <article class="stage" data-stage="S3"><div class="stage-no">S3</div><h3>MLE Solver</h3><p data-copy="zh">生成可执行模型代码，求解并进行迭代修正。</p><p data-copy="en" hidden>Generate executable model code, solve and iteratively revise it.</p></article>
+          <article class="stage" data-stage="S4"><div class="stage-no">S4</div><h3>Model Validation</h3><p data-copy="zh">执行灵敏度、不确定性、残差与稳健性分析。</p><p data-copy="en" hidden>Run sensitivity, uncertainty, residual and robustness analysis.</p></article>
+          <article class="stage" data-stage="S5"><div class="stage-no">S5</div><h3>SciPilot Figure</h3><p data-copy="zh">根据结果与论文任务路由高质量科研图表。</p><p data-copy="en" hidden>Route publication-grade figures from results and paper needs.</p></article>
+          <article class="stage" data-stage="S6"><div class="stage-no">S6</div><h3>Paper Writing</h3><p data-copy="zh">以 CUMCM 中文或 MCM 英文模式组织竞赛论文。</p><p data-copy="en" hidden>Draft contest papers in CUMCM Chinese or MCM English mode.</p></article>
+          <article class="stage" data-stage="S7"><div class="stage-no">S7</div><h3>Paper Review</h3><p data-copy="zh">按照九维标准进行终审、定位缺陷并给出修复路径。</p><p data-copy="en" hidden>Perform a nine-dimension final review and route repairs.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Core mechanism / 核心机制</div>
+          <h2 data-copy="zh">不只生成答案，还验证答案</h2>
+          <h2 data-copy="en" hidden>Do not merely generate an answer—verify it</h2>
+        </div>
+        <div class="mechanism-grid">
+          <div class="loop-card">
+            <h3>Generate–Verify–Revise</h3>
+            <p class="section-copy" data-copy="zh">求解器在代码生成后执行硬断言、物理一致性与结果合理性检查；失败信息回流至生成阶段，直至通过或达到迭代上限。</p>
+            <p class="section-copy" data-copy="en" hidden>After code generation, the solver checks hard assertions, physical consistency and result plausibility. Failures flow back into generation until the checks pass or the revision limit is reached.</p>
+            <div class="loop">
+              <div class="loop-node"><div><b>Generate</b><span data-copy="zh">生成模型与代码</span><span data-copy="en" hidden>Produce model and code</span></div></div>
+              <div class="loop-arrow">→</div>
+              <div class="loop-node"><div><b>Verify</b><span data-copy="zh">执行与多层校验</span><span data-copy="en" hidden>Execute and validate</span></div></div>
+              <div class="loop-arrow">→</div>
+              <div class="loop-node"><div><b>Revise</b><span data-copy="zh">反馈错误并修正</span><span data-copy="en" hidden>Feed back and repair</span></div></div>
+            </div>
+            <div class="loop-return" data-copy="zh">未通过 → 错误轨迹返回 Generate</div>
+            <div class="loop-return" data-copy="en" hidden>Failure → error trace returns to Generate</div>
+          </div>
+          <div class="features">
+            <article class="feature-card"><div class="feature-icon">01</div><h3 data-copy="zh">动态插件架构</h3><h3 data-copy="en" hidden>Dynamic plugin architecture</h3><p data-copy="zh">扫描技能目录并自动注册 BaseSkill 子类，避免中心化配置。</p><p data-copy="en" hidden>Scan skill folders and register BaseSkill subclasses automatically.</p></article>
+            <article class="feature-card"><div class="feature-icon">02</div><h3 data-copy="zh">上下文贯通</h3><h3 data-copy="en" hidden>Context threading</h3><p data-copy="zh">约束、模型、验证结果、图表与论文内容在阶段间连续传递。</p><p data-copy="en" hidden>Constraints, models, validation, figures and paper content flow together.</p></article>
+            <article class="feature-card"><div class="feature-icon">03</div><h3 data-copy="zh">按需依赖</h3><h3 data-copy="en" hidden>Optional dependencies</h3><p data-copy="zh">仅 PyYAML 为硬依赖，科学计算后端以 extras 形式安装。</p><p data-copy="en" hidden>Only PyYAML is mandatory; scientific backends are installed as extras.</p></article>
+            <article class="feature-card"><div class="feature-icon">04</div><h3 data-copy="zh">竞赛双模式</h3><h3 data-copy="en" hidden>Dual contest modes</h3><p data-copy="zh">针对 CUMCM 与 MCM 的语言、引用和论文表达差异进行适配。</p><p data-copy="en" hidden>Adapt language, citations and paper conventions for CUMCM and MCM.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Skill matrix / 技能矩阵</div>
+          <h2 data-copy="zh">15 个技能，分为三层</h2>
+          <h2 data-copy="en" hidden>15 skills across three tiers</h2>
+          <p class="section-copy" data-copy="zh">核心流水线、可视化专家和写作评审辅助共同构成可组合的能力层。</p>
+          <p class="section-copy" data-copy="en" hidden>Core pipeline, visualisation specialists and writing/review aids form a composable capability stack.</p>
+        </div>
+        <div class="skills-grid">
+          <article class="skill-group">
+            <div class="skill-group-head"><h3>Tier 1</h3><span>CORE</span></div>
+            <div class="skill-list">
+              <div class="skill-item">brainstorming <small>S0</small></div><div class="skill-item">problem-analyzer <small>S1</small></div><div class="skill-item">data-processing <small>S2</small></div><div class="skill-item">mle-solver <small>S3</small></div><div class="skill-item">model-validation <small>S4</small></div><div class="skill-item">scipilot-figure <small>S5</small></div><div class="skill-item">mcm-paper-writing <small>S6</small></div><div class="skill-item">paper-review <small>S7</small></div>
+            </div>
+          </article>
+          <article class="skill-group">
+            <div class="skill-group-head"><h3>Tier 2</h3><span>VISUAL</span></div>
+            <div class="skill-list">
+              <div class="skill-item">scipilot-figure-skill <small>S5</small></div><div class="skill-item">diagram-generator <small>S5</small></div><div class="skill-item">matlab-figure <small>S5</small></div><div class="skill-item">nature-figure <small>S5</small></div>
+            </div>
+          </article>
+          <article class="skill-group">
+            <div class="skill-group-head"><h3>Tier 3</h3><span>REVIEW</span></div>
+            <div class="skill-list">
+              <div class="skill-item">winning-paper-analysis <small>S6</small></div><div class="skill-item">reference-manager <small>S6</small></div><div class="skill-item">systematic-debugging <small>AUX</small></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart">
+      <div class="shell quickstart">
+        <div class="quickstart-copy">
+          <div class="kicker">Quickstart / 快速开始</div>
+          <h2 data-copy="zh">安装后即可发现并运行技能</h2>
+          <h2 data-copy="en" hidden>Discover and run skills immediately after installation</h2>
+          <p class="section-copy" data-copy="zh">项目要求 Python 3.10+。可仅安装核心能力，也可按 solver、viz、validation 等 extras 选择科学计算依赖。</p>
+          <p class="section-copy" data-copy="en" hidden>The project requires Python 3.10+. Install only the core, or select scientific dependencies through solver, viz and validation extras.</p>
+          <ul>
+            <li data-copy="zh">动态列出当前可用技能</li><li data-copy="en" hidden>List currently available skills dynamically</li>
+            <li data-copy="zh">单独调用某项能力或运行完整流水线</li><li data-copy="en" hidden>Invoke one capability or run the complete pipeline</li>
+            <li data-copy="zh">通过统一字典传递题目、数据路径与中间结果</li><li data-copy="en" hidden>Pass prompts, data paths and intermediate results through one dictionary</li>
+          </ul>
+        </div>
+        <div class="code-card">
+          <div class="code-head"><span>quickstart.py</span><button class="copy-btn" type="button" data-copy-button>Copy</button></div>
+          <pre id="quick-code"><span class="code-comment"># Install the core package</span>
+pip install -e .
+
+<span class="code-key">from</span> mathmod_pilot.core <span class="code-key">import</span> MathModPilotAgent
+
+agent = MathModPilotAgent()
+print(agent.list_skills())
+
+results = agent.run_pipeline({
+    <span class="code-str">"problem_text"</span>: <span class="code-str">"Optimise a transport network..."</span>,
+    <span class="code-str">"data_path"</span>: <span class="code-str">"data.xlsx"</span>,
+})
+
+<span class="code-key">for</span> name, output <span class="code-key">in</span> results.items():
+    print(name, output.get(<span class="code-str">"status"</span>, <span class="code-str">"n/a"</span>))</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="cta">
+          <div>
+            <div class="kicker">Open source / 开源</div>
+            <h2 data-copy="zh">构建你的数学建模智能工作流</h2>
+            <h2 data-copy="en" hidden>Build your intelligent mathematical modelling workflow</h2>
+            <p data-copy="zh">浏览源码、阅读完整文档，或按统一技能接口扩展新的竞赛能力。</p>
+            <p data-copy="en" hidden>Explore the source, read the full documentation or add new contest capabilities through the unified skill interface.</p>
+          </div>
+          <a class="btn btn-primary" href="https://github.com/Fatespur/mathmod-pilot" target="_blank" rel="noreferrer"><span data-copy="zh">打开 GitHub</span><span data-copy="en" hidden>Open GitHub</span> ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <span>MathMod-Pilot · MIT License</span>
+      <span data-copy="zh">Agent-Native 数学建模技能库</span><span data-copy="en" hidden>Agent-native mathematical modelling skill library</span>
+    </div>
+  </footer>
+
+  <script>
+    const copyNodes = [...document.querySelectorAll('[data-copy]')];
+    const zhButton = document.getElementById('lang-zh');
+    const enButton = document.getElementById('lang-en');
+
+    function setLanguage(lang) {
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.body.dataset.lang = lang;
+      copyNodes.forEach((node) => { node.hidden = node.dataset.copy !== lang; });
+      zhButton.classList.toggle('active', lang === 'zh');
+      enButton.classList.toggle('active', lang === 'en');
+      localStorage.setItem('mathmod-pilot-language', lang);
+    }
+
+    zhButton.addEventListener('click', () => setLanguage('zh'));
+    enButton.addEventListener('click', () => setLanguage('en'));
+
+    const storedLanguage = localStorage.getItem('mathmod-pilot-language');
+    const browserLanguage = navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    setLanguage(storedLanguage || browserLanguage);
+
+    document.querySelector('[data-copy-button]').addEventListener('click', async (event) => {
+      const text = document.getElementById('quick-code').innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        event.currentTarget.textContent = document.body.dataset.lang === 'zh' ? '已复制' : 'Copied';
+        setTimeout(() => { event.currentTarget.textContent = 'Copy'; }, 1400);
+      } catch (_) {
+        event.currentTarget.textContent = 'Select';
+      }
+    });
+  </script>
+</body>
+</html>
