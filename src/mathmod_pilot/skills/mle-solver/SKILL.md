@@ -2403,7 +2403,7 @@ else:
 
 ```python
 import sys
-sys.path.insert(0, 'c:/Users/Fate永恒/.trae-cn/skills/mle-solver/extensions')
+sys.path.insert(0, '<USER_HOME>/workspace')
 from heuristic_algorithms import solve_optimization
 
 # 统一接口：自动选择最优算法

@@ -1,0 +1,11 @@
+{
+  "_comment": "PH1 identity corpus TEMPLATE. Copy to identity_corpus.local.json and fill REAL team data before scanning real submissions. Never commit the filled copy. Tokens are matched case-insensitively across DOCX/PDF text, metadata properties, XMP, and raster metadata.",
+  "high_confidence_tokens_example_only": [
+    "张三",
+    "zhangsan@example.com",
+    "13800138000",
+    "20251102",
+    "某某大学"
+  ],
+  "usage_note": "This example file ships placeholder tokens only; the anonymity validator treats it as high-confidence identity ground truth."
+}

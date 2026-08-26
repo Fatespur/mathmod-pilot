@@ -97,6 +97,14 @@ where = ["src"]
     "**/*.txt",
     "**/*.version"
 ]
+"mathmod_pilot.templates" = [
+    "**/*.*"
+]
+"mathmod_pilot.governance" = [
+    "**/*.json",
+    "**/*.py"
+]
+
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
