@@ -14,5 +14,5 @@ version: 3.1.0
 - **S3 (High-Performance Solver)**: Vectorized kinematics solver, multi-objective spatio-temporal relay optimization.
 - **S4 (Independent Scientific Validation)**: Step size convergence, OAT/Sobol sensitivity, 5000-run Monte Carlo simulation.
 - **S5 (Figure Governance)**: Publication-grade 300dpi figures (overview, geometry, response surface, gantt, radar/matrix).
-- **S6 (Paper Writing V2.1)**: Compact anonymous format (SimSun + Times New Roman, 18-22 pages, XeLaTeX).
+- **S6 (Paper Writing V3)**: Markdown-Only writing pipeline (paper.md, Markdown Math, figure/table depth, no LaTeX).
 - **S7 (Submission Governance)**: Anonymity verification, reference integrity, package signing.

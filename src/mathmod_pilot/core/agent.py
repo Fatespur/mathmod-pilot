@@ -6,6 +6,22 @@ Instead it relies on :func:`mathmod_pilot.skills.discover_skills` to scan the
 :class:`~mathmod_pilot.skills.base.BaseSkill` instances.  This means adding a new
 skill is as simple as dropping a folder that contains a ``SKILL.md`` and a
 ``skill.py`` -- no registration code needs to change.
+
+.. warning::
+    LEGACY_SYMBOL_SET / NOT_V3_PRODUCTION_ENTRY
+
+    The S0–S7 pipeline symbol set in this module (PIPELINE list below) is a
+    LEGACY nomenclature from the v1 orchestration architecture.
+
+    As of Phase 4 Production Cutover (2026-09-06), the authoritative production
+    runtime is ``orchestrator_v3.py`` (V3 HITL State Machine). This agent module
+    is NOT the production entry point. It is retained for:
+      - Internal skill discovery / loading infrastructure
+      - Development and testing of individual Skills
+      - Non-production research workflows
+
+    Do NOT use this module to run production competition workflows.
+    Use: CUMCM_skill_pipeline_prompt.md (V3) + orchestrator_v3.py CLI
 """
 from __future__ import annotations
 
