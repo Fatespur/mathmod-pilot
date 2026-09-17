@@ -1,0 +1,4 @@
+interface:
+  display_name: "赛题分析与路由"
+  short_description: "用于系统拆解竞赛题目、识别问题类型并选择适配的建模方法"
+  default_prompt: "Use $problem-analyzer to analyze this competition problem and route suitable methods."

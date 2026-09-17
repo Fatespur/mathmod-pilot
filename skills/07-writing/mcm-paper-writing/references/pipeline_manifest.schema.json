@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/math-model-pipeline-manifest.schema.json",
+  "title": "Math modeling skill pipeline manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "contest",
+    "problem_id",
+    "stage",
+    "status",
+    "inputs",
+    "artifacts",
+    "metrics",
+    "assumptions",
+    "warnings",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "contest": {"enum": ["CUMCM", "MCM", "ICM", "OTHER"]},
+    "problem_id": {"type": "string", "minLength": 1},
+    "stage": {
+      "enum": ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "AUX"]
+    },
+    "status": {
+      "enum": ["not_started", "in_progress", "blocked", "failed", "completed"]
+    },
+    "inputs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/fileRecord"}
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/fileRecord"}
+    },
+    "metrics": {"type": "object"},
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "statement": {"type": "string"},
+          "status": {"enum": ["active", "validated", "rejected", "superseded"]},
+          "risk": {"enum": ["low", "medium", "high", "critical"]},
+          "evidence": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message", "owner_stage"],
+        "properties": {
+          "code": {"type": "string"},
+          "message": {"type": "string"},
+          "owner_stage": {"type": "string"},
+          "blocking": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["updated_at", "updated_by"],
+      "properties": {
+        "updated_at": {"type": "string"},
+        "updated_by": {"type": "string"},
+        "commands": {"type": "array", "items": {"type": "string"}},
+        "environment": {"type": "object"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "fileRecord": {
+      "type": "object",
+      "required": ["path", "role"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+        "schema": {"type": "string"},
+        "source_stage": {"type": "string"}
+      },
+      "additionalProperties": true
+    }
+  }
+}

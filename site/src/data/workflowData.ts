@@ -1,0 +1,310 @@
+export interface WorkflowStage {
+  id: string;
+  name: string;
+  owner_skill: string;
+  associated_skills?: string[];
+  category: string;
+  depends_on: string[];
+  entry_artifacts: string[];
+  exit_artifacts: string[];
+  description: string;
+  is_conditional?: boolean;
+  trigger?: string;
+}
+
+export interface RevisionRoute {
+  trigger: string;
+  source: string;
+  target: string;
+  action: string;
+}
+
+export const WORKFLOW_STAGES: WorkflowStage[] = [
+  {
+    "id": "S0",
+    "name": "Workflow State Machine & Orchestration",
+    "owner_skill": "modeling-workflow-orchestrator",
+    "category": "orchestration",
+    "depends_on": [],
+    "entry_artifacts": [
+      "user_problem_prompt",
+      "run_inputs.json"
+    ],
+    "exit_artifacts": [
+      "workflow_state.json",
+      "pipeline_manifest.json"
+    ],
+    "description": "全流程状态机控制中枢，负责阶段跃迁、工件指纹签名、依赖失效级联与回退路由。"
+  },
+  {
+    "id": "S1",
+    "name": "Problem Understanding & Decomposition",
+    "owner_skill": "problem-analyzer",
+    "category": "problem-understanding",
+    "depends_on": [
+      "S0"
+    ],
+    "entry_artifacts": [
+      "run_inputs.json"
+    ],
+    "exit_artifacts": [
+      "problem_structure.json",
+      "problem_graph.json",
+      "variables_and_units.json",
+      "hard_assertions.json",
+      "assumption_risk_register.json",
+      "expected_output_ranges.json",
+      "analysis_report.md"
+    ],
+    "description": "赛题机理结构抽取，分解子任务，定义目标函数与硬约束，建立断言集。"
+  },
+  {
+    "id": "S2A",
+    "name": "Data Profiling & Feature Preprocessing",
+    "owner_skill": "data-processing",
+    "category": "data-analysis",
+    "depends_on": [
+      "S1"
+    ],
+    "entry_artifacts": [
+      "problem_structure.json",
+      "raw_data_files"
+    ],
+    "exit_artifacts": [
+      "preprocessing_manifest.json",
+      "data_dictionary.json",
+      "preprocessing_report.md",
+      "clean_data/"
+    ],
+    "description": "多源赛题数据清洗、缺失值与异常值填补、特征工程、PCA降维与无泄漏预处理。"
+  },
+  {
+    "id": "S2B",
+    "name": "Model Family Portfolio & Selection",
+    "owner_skill": "model-selection",
+    "category": "model-formulation",
+    "depends_on": [
+      "S1",
+      "S2A"
+    ],
+    "entry_artifacts": [
+      "problem_structure.json",
+      "data_dictionary.json",
+      "preprocessing_report.md"
+    ],
+    "exit_artifacts": [
+      "candidate_portfolio.json",
+      "selection_verdict.json"
+    ],
+    "description": "反套路门禁审查，基于机理与结构构建基线/主选/备选多层次模型投资组合。"
+  },
+  {
+    "id": "S3",
+    "name": "Mathematical Formulation & Solver Execution",
+    "owner_skill": "mle-solver",
+    "category": "algorithms-and-solving",
+    "depends_on": [
+      "S2B"
+    ],
+    "entry_artifacts": [
+      "candidate_portfolio.json",
+      "selection_verdict.json"
+    ],
+    "exit_artifacts": [
+      "model_spec.json",
+      "solver_manifest.json",
+      "paper_macro_candidates.json",
+      "validation_handoff.json",
+      "results/"
+    ],
+    "description": "将数学抽象映射为数值优化/启发式算法代码（GA/PSO/SA/LP/MILP），执行求解与断言验证。"
+  },
+  {
+    "id": "S3-dbg",
+    "name": "Solver Crash & Numeric Anomaly Recovery",
+    "owner_skill": "systematic-debugging",
+    "category": "algorithms-and-solving",
+    "depends_on": [
+      "S3"
+    ],
+    "is_conditional": true,
+    "trigger": "solver_crash | failed_assertions | physics_warning",
+    "entry_artifacts": [
+      "model_spec.json",
+      "crash_traceback",
+      "failed_assertions.json"
+    ],
+    "exit_artifacts": [
+      "debug_report.json",
+      "repaired_model_spec.json"
+    ],
+    "description": "在出现数值发散、量纲违规或物理不合理指标时，触发四阶段根因排查与模型自愈修复。"
+  },
+  {
+    "id": "S4",
+    "name": "Independent Validation & Sensitivity Gate",
+    "owner_skill": "model-validation",
+    "category": "validation",
+    "depends_on": [
+      "S3"
+    ],
+    "entry_artifacts": [
+      "model_spec.json",
+      "solver_manifest.json",
+      "validation_handoff.json",
+      "results/"
+    ],
+    "exit_artifacts": [
+      "validation_plan.json",
+      "validation_evidence.json",
+      "failure_envelope.json",
+      "model_validation_gate.json",
+      "validation_artifact_index.json",
+      "validation_report.md"
+    ],
+    "description": "独立放行门禁：预注册验证方案，开展基线超越性检验、参数灵敏度分析与误差包络测试。"
+  },
+  {
+    "id": "S5A",
+    "name": "Scientific Data & Result Visualization",
+    "owner_skill": "scipilot-figure-cumcm",
+    "associated_skills": [
+      "scipilot-figure-skill",
+      "matlab-figure"
+    ],
+    "category": "visualization",
+    "depends_on": [
+      "S4"
+    ],
+    "entry_artifacts": [
+      "validation_evidence.json",
+      "results/"
+    ],
+    "exit_artifacts": [
+      "figure_plan.json",
+      "figure_manifest.json",
+      "figures/final/"
+    ],
+    "description": "结论-证据图表规划，基于 Matplotlib/Seaborn/MATLAB 生成高质量科研与竞赛图表，完成视觉自检。"
+  },
+  {
+    "id": "S5B",
+    "name": "Academic Methodology & Framework Flowchart",
+    "owner_skill": "cumcm-academic-flowchart",
+    "category": "visualization",
+    "depends_on": [
+      "S4",
+      "S1"
+    ],
+    "entry_artifacts": [
+      "problem_structure.json",
+      "candidate_portfolio.json",
+      "model_spec.json"
+    ],
+    "exit_artifacts": [
+      "diagram_plan.json",
+      "framework_assessment.json",
+      "diagram_primary.drawio",
+      "diagram_primary.svg",
+      "diagram_primary.png"
+    ],
+    "description": "顶尖论文标志性的双流/泳道方法架构与技术路线图生成，导出矢量与高清格式。"
+  },
+  {
+    "id": "S6",
+    "name": "Standardized Markdown Paper Writing",
+    "owner_skill": "mcm-paper-writing",
+    "category": "writing",
+    "depends_on": [
+      "S5A",
+      "S5B"
+    ],
+    "entry_artifacts": [
+      "figure_manifest.json",
+      "framework_assessment.json",
+      "model_spec.json",
+      "validation_report.md"
+    ],
+    "exit_artifacts": [
+      "paper_page_plan.json",
+      "paper_macros.json",
+      "PAPER_FINAL.md",
+      "paper.docx",
+      "writing_metrics.json"
+    ],
+    "description": "纯 Markdown 规范写作，动态篇幅预算，Word 原生 OMML 公式嵌入，无目录严格匿名排版。"
+  },
+  {
+    "id": "PH2",
+    "name": "Reference & Citation Governance",
+    "owner_skill": "reference-manager",
+    "category": "writing",
+    "depends_on": [
+      "S6"
+    ],
+    "entry_artifacts": [
+      "PAPER_FINAL.md"
+    ],
+    "exit_artifacts": [
+      "citation_report.json",
+      "verified_references.bib"
+    ],
+    "description": "GB/T 7714 参考文献标引与正文双向核验，杜绝捏造引文，确保学术规范合规。"
+  },
+  {
+    "id": "S7",
+    "name": "End-to-End Paper Review & Submission Gate",
+    "owner_skill": "paper-review",
+    "associated_skills": [
+      "winning-paper-analysis"
+    ],
+    "category": "quality-assurance",
+    "depends_on": [
+      "S6",
+      "PH2"
+    ],
+    "entry_artifacts": [
+      "PAPER_FINAL.md",
+      "paper_macros.json",
+      "validation_report.md"
+    ],
+    "exit_artifacts": [
+      "paper_review_report.json",
+      "anonymity_report.json",
+      "package_manifest.json"
+    ],
+    "description": "数值宏全链溯源对账，符号未定义扫描，格式与匿名终审，形成最终竞赛提交包。"
+  }
+];
+export const REVISION_DAG: RevisionRoute[] = [
+  {
+    "trigger": "bad_data",
+    "source": "S2A",
+    "target": "S1",
+    "action": "重新审查赛题变量与数据依赖定义"
+  },
+  {
+    "trigger": "wrong_model_family",
+    "source": "S2B",
+    "target": "S2B",
+    "action": "启用备选模型投资组合 (Alternative Portfolio)"
+  },
+  {
+    "trigger": "solver_crash",
+    "source": "S3",
+    "target": "S3-dbg",
+    "action": "排查数值求解异常与边界约束违背"
+  },
+  {
+    "trigger": "scientific_validation_revise",
+    "source": "S4",
+    "target": "S2B",
+    "action": "主选模型未通过基线超越或鲁棒性检验，回退更换模型方案"
+  },
+  {
+    "trigger": "numeric_mismatch",
+    "source": "S7",
+    "target": "S4",
+    "action": "论文结论数值与验证计算结果不一致，重新校准数值宏"
+  }
+];

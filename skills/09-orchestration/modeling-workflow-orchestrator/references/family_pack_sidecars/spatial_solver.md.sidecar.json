@@ -1,0 +1,19 @@
+{
+  "sidecar_version": "r6b.v1",
+  "family_id": "SPATIAL",
+  "stage": "solver",
+  "authority": "ADVISORY_ONLY",
+  "source_file": "skills/04-algorithms-and-solving/mle-solver/references/family_packs/spatial_solver.md",
+  "source_sha256": "5c4e075b17cfcde4d30a4239300c6dd7d186c7ccb3b18a7e24ad719575c80a31",
+  "eligibility": "see source: Eligible structure section",
+  "preconditions": "see source bullet list",
+  "assumptions": "per source",
+  "baseline_candidates": "per source Baselines/Baseline line",
+  "serious_alternatives": "per source Alternatives/Alternative line",
+  "formulation_patterns": "per source (solver/selection contracts)",
+  "solver_options": "per source solver hierarchy (where present)",
+  "validation_requirements": "per source preregistered checks (validation packs)",
+  "failure_modes": "per source Failure modes/Failure triggers",
+  "known_limitations": "per source Replacement triggers / limitations",
+  "sovereignty": "NONE - advisory knowledge bound by hash into selection verdict v2"
+}

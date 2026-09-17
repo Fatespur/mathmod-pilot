@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "modeling_ir.schema.json",
+  "title": "Mathematical Modeling Intermediate Representation",
+  "type": "object",
+  "required": ["schema_version", "meta", "questions", "diagram", "groups", "nodes", "edges"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "meta": {
+      "type": "object",
+      "required": ["title", "language", "competition", "source_files", "contest_mode"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "language": {"type": "string"},
+        "competition": {"type": "string"},
+        "source_files": {"type": "array", "items": {"type": "string"}},
+          "contest_mode": {"type": "boolean"}
+          ,"framework_mode": {"enum": ["method_hierarchy", "imported_diagram"]}
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["question_id", "primary_type", "confidence", "goal", "uncertainties"],
+        "properties": {
+          "question_id": {"type": "string"},
+          "primary_type": {"enum": ["优化类", "预测类", "评价类", "数理统计类", "机理分析类"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "goal": {"type": "string"},
+          "uncertainties": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "diagram": {
+      "type": "object",
+      "required": ["diagram_type", "target_width_mm", "transparent_background", "theme", "variants"],
+      "properties": {
+        "diagram_type": {"type": "string"},
+        "target_width_mm": {"type": "number", "exclusiveMinimum": 0},
+        "transparent_background": {"type": "boolean"},
+        "theme": {"type": "string"},
+        "variants": {"type": "integer", "minimum": 2}
+      }
+    },
+    "groups": {"type": "array", "items": {"type": "object"}},
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "short_label", "semantic_type", "question_id", "importance", "source_reference", "inferred"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "label": {"type": "string", "minLength": 1},
+          "short_label": {"type": "string", "minLength": 1},
+          "semantic_type": {"type": "string"},
+          "question_id": {"type": "string"},
+          "importance": {"enum": ["primary", "secondary", "auxiliary"]},
+          "stage": {"type": "integer", "minimum": 0},
+          "framework_role": {
+            "enum": ["context", "main_method", "submethod", "component", "validation", "output", "evidence"]
+          },
+          "module": {"type": "string"},
+          "branch": {"type": "string"},
+          "parent_id": {"type": ["string", "null"]},
+          "source_reference": {"type": "string"},
+          "inferred": {"type": "boolean"}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source", "target", "edge_type", "feedback"],
+        "properties": {
+          "id": {"type": "string"},
+          "source": {"type": "string"},
+          "target": {"type": "string"},
+          "edge_type": {"type": "string"},
+          "feedback": {"type": "boolean"}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

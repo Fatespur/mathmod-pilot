@@ -1,0 +1,4 @@
+interface:
+  display_name: "参考文献管理"
+  short_description: "用于生成、排序并核验国赛或美赛规范参考文献及正文引用"
+  default_prompt: "Use $reference-manager to format and verify the references for this modeling paper."

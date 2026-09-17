@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/paper-macros.schema.json",
+  "title": "Mathematical modeling paper macros",
+  "type": "object",
+  "required": ["schema_version", "macros"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "run_id": {"type": "string"},
+        "contest": {"enum": ["CUMCM", "MCM", "ICM", "OTHER"]},
+        "problem_id": {"type": "string"},
+        "generated_at": {"type": "string"},
+        "source_manifest": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "macros": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/macroOrGroup"
+      }
+    },
+    "allowlist": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {"type": ["number", "string"]}
+        },
+        "years": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 1000, "maximum": 9999}
+        },
+        "tokens": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "macro": {
+      "type": "object",
+      "required": ["value", "source"],
+      "properties": {
+        "value": {
+          "type": ["number", "integer", "string", "array"]
+        },
+        "unit": {"type": "string"},
+        "source": {"type": "string", "minLength": 1},
+        "description": {"type": "string"},
+        "precision": {"type": "integer", "minimum": 0, "maximum": 15},
+        "tolerance": {"type": "number", "minimum": 0},
+        "formats": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": true
+    },
+    "macroOrGroup": {
+      "oneOf": [
+        {"$ref": "#/$defs/macro"},
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/macroOrGroup"
+          }
+        }
+      ]
+    }
+  }
+}

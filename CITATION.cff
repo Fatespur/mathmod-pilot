@@ -1,32 +1,17 @@
 cff-version: 1.2.0
-title: "MathMod-Pilot: An Agent-Native Skill Library for Mathematical Modelling Competitions"
-message: "If you use MathMod-Pilot in your research or competition work, please cite it as below."
-type: software
+message: "If you use this toolkit in your mathematical modeling research or competitions, please cite it as below."
+title: "CUMCM Mathematical Modeling Skills Toolkit: Agent-Native Workflow for Competitions"
+version: 1.0.0
+date-released: 2026-09-17
+url: "https://github.com/Fatespur/mathmod-pilot"
 authors:
-  - alias: "MathMod-Pilot Contributors"
-repository-code: "https://github.com/Fatespur/mathmod-pilot"
-license: MIT
-version: "1.0.0"
-date-released: "2026-07-20"
+  - name: "TODO"
+    affiliation: "TODO"
 keywords:
-  - mathematical modelling
-  - agent
-  - skill
-  - CUMCM
-  - MCM
-  - optimization
-  - scientific visualization
-abstract: >-
-  MathMod-Pilot packages 15 specialised skills -- each a self-contained folder with
-  a native SKILL.md prompt and a Python entry point -- that together cover the
-  full CUMCM/MCM pipeline from problem analysis and data processing through
-  model solving, validation, visualisation, paper writing and final review.
-preferred-citation:
-  type: software
-  title: "MathMod-Pilot: An Agent-Native Skill Library for Mathematical Modelling Competitions"
-  authors:
-    - alias: "MathMod-Pilot Contributors"
-  year: 2026
-  repository-code: "https://github.com/Fatespur/mathmod-pilot"
-  license: MIT
-  version: "1.0.0"
+  - "mathematical modeling"
+  - "CUMCM"
+  - "MCM/ICM"
+  - "agent skills"
+  - "scientific computing"
+  - "optimization"
+license: "MIT"

@@ -1,0 +1,25 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://local.codex/schemas/candidate_portfolio.schema.v2.json",
+  "title":"Candidate Portfolio v2 R3 overlay",
+  "type":"object",
+  "required":["schema_version","problem_id","problem_structure_sha256","baseline","primary","alternative","fallback","screening_matrix"],
+  "properties":{
+    "schema_version":{"const":"candidate_portfolio.schema.v2"},
+    "problem_id":{"type":"string","minLength":1},
+    "problem_structure_sha256":{"type":"string","pattern":"^[0-9a-fA-F]{64}$"},
+    "baseline":{"$ref":"#/$defs/entry"},"primary":{"$ref":"#/$defs/entry"},"alternative":{"$ref":"#/$defs/entry"},"fallback":{"$ref":"#/$defs/entry"},
+    "screening_matrix":{"type":"array","minItems":10}
+  },
+  "$defs":{
+    "entry":{"type":"object"},
+    "family_contract":{"type":"object","additionalProperties":false,"required":["family_id","family_version","eligibility_evidence","rejected_near_neighbors","family_validation_requirements","replacement_triggers"],"properties":{
+      "family_id":{"enum":["NETWORK_ROUTING","SPATIAL","SIMULATION_QUEUE_DES_ABM","DYNAMIC_STATE_SPACE_INVERSE","HYBRID_MODELING"]},
+      "family_version":{"const":"2.0"},
+      "eligibility_evidence":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["NETWORK_GRAPH_PRESENT","CAPACITATED_ROUTING_FACTS_PRESENT","SPATIAL_STRUCTURE_AND_CRS_PRESENT","SIMULATION_STOCHASTIC_STRUCTURE_PRESENT","DYNAMIC_STATE_OBSERVATION_STRUCTURE_PRESENT","HYBRID_MULTI_COMPONENT_STRUCTURE_PRESENT"]}},
+      "rejected_near_neighbors":{"type":"array","minItems":1,"items":{"type":"string","minLength":10}},
+      "family_validation_requirements":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+      "replacement_triggers":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}}
+    }}
+  }
+}

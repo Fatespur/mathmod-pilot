@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "theme.schema.json",
+  "type": "object",
+  "required": ["name", "background", "text", "roles", "group", "edge", "opacity"],
+  "properties": {
+    "name": {"type": "string"},
+    "background": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+    "text": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+    "roles": {
+      "type": "object",
+      "required": ["data", "processing", "feature", "model", "decision", "validation", "result", "auxiliary"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["fill", "stroke", "text"]
+      }
+    },
+    "opacity": {
+      "type": "object",
+      "required": ["node", "core", "group", "stroke", "edge_primary", "edge_auxiliary"],
+      "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+    }
+  }
+}

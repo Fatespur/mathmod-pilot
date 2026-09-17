@@ -1,0 +1,18 @@
+{
+  "name": "teal-orange",
+  "background": "#FFFFFF",
+  "text": "#26383A",
+  "roles": {
+    "data": {"fill": "#278E99", "stroke": "#1B666E", "text": "#26383A"},
+    "processing": {"fill": "#35A985", "stroke": "#277B62", "text": "#26383A"},
+    "feature": {"fill": "#4E91A5", "stroke": "#376979", "text": "#26383A"},
+    "model": {"fill": "#397B83", "stroke": "#28575D", "text": "#26383A"},
+    "decision": {"fill": "#DE893D", "stroke": "#A05F2A", "text": "#26383A"},
+    "validation": {"fill": "#C46143", "stroke": "#8D452F", "text": "#26383A"},
+    "result": {"fill": "#65A45C", "stroke": "#497743", "text": "#26383A"},
+    "auxiliary": {"fill": "#8B9998", "stroke": "#656F6E", "text": "#26383A"}
+  },
+  "group": {"fill": "#99B5B1", "stroke": "#6C8783"},
+  "edge": {"primary": "#415F61", "auxiliary": "#788E8E", "feedback": "#A95537"},
+  "opacity": {"node": 0.24, "core": 0.34, "group": 0.09, "stroke": 0.93, "edge_primary": 0.95, "edge_auxiliary": 0.58}
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "数学建模主/子方法框架图"
+  short_description: "生成高质量层级化、分支汇聚且可编辑的数学建模方法框架图"
+  default_prompt: "Use $cumcm-academic-flowchart to turn the provided modeling materials into a hierarchical main-method and submethod framework with two validated publication-ready layouts."

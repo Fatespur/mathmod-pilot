@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/failure_envelope.schema.v1.json",
+  "title": "Failure Envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "problem_id", "model_id", "model_artifact_hash", "failures"],
+  "properties": {
+    "schema_version": {"const": "failure_envelope.schema.v1"},
+    "problem_id": {"type": "string", "minLength": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "model_artifact_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "failures": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["failure_id", "test_id", "condition", "mechanism", "observable_signature", "severity", "detectability", "downstream_impact", "recommended_action", "test_status"],
+        "properties": {
+          "failure_id": {"type": "string", "minLength": 1},
+          "test_id": {"type": "string", "minLength": 1},
+          "condition": {"type": "string", "minLength": 10},
+          "mechanism": {"type": "string", "minLength": 10},
+          "observable_signature": {"type": "string", "minLength": 10},
+          "severity": {"enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+          "detectability": {"enum": ["HIGH", "MEDIUM", "LOW"]},
+          "downstream_impact": {"type": "string", "minLength": 10},
+          "recommended_action": {"enum": ["LIMIT_CLAIM", "MONITOR", "REVISE_MODEL", "CHANGE_MODEL", "REJECT_MODEL", "COLLECT_MORE_DATA"]},
+          "test_status": {"enum": ["TESTED_TRIGGERED", "TESTED_NOT_TRIGGERED", "NOT_TESTED"]}
+        }
+      }
+    }
+  }
+}

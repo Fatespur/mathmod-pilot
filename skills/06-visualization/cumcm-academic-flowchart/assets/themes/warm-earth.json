@@ -1,0 +1,18 @@
+{
+  "name": "warm-earth",
+  "background": "#FFFFFF",
+  "text": "#423229",
+  "roles": {
+    "data": {"fill": "#6F8FA6", "stroke": "#506778", "text": "#423229"},
+    "processing": {"fill": "#8AA381", "stroke": "#64775E", "text": "#423229"},
+    "feature": {"fill": "#9B829D", "stroke": "#715E72", "text": "#423229"},
+    "model": {"fill": "#806A8F", "stroke": "#5D4D68", "text": "#423229"},
+    "decision": {"fill": "#C98445", "stroke": "#925F32", "text": "#423229"},
+    "validation": {"fill": "#B85F4D", "stroke": "#854438", "text": "#423229"},
+    "result": {"fill": "#789B63", "stroke": "#587248", "text": "#423229"},
+    "auxiliary": {"fill": "#A1968B", "stroke": "#746C64", "text": "#423229"}
+  },
+  "group": {"fill": "#B8AA9A", "stroke": "#897B6C"},
+  "edge": {"primary": "#67574D", "auxiliary": "#93877F", "feedback": "#9D5144"},
+  "opacity": {"node": 0.24, "core": 0.34, "group": 0.1, "stroke": 0.93, "edge_primary": 0.95, "edge_auxiliary": 0.58}
+}

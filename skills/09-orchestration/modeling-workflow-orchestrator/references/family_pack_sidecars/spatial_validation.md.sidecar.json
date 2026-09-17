@@ -1,0 +1,19 @@
+{
+  "sidecar_version": "r6b.v1",
+  "family_id": "SPATIAL",
+  "stage": "validation",
+  "authority": "ADVISORY_ONLY",
+  "source_file": "skills/05-validation/model-validation/references/family_packs/spatial_validation.md",
+  "source_sha256": "16b0893618436f067ae0396ceb8b6666159a8800a2618436f91e5347852f837f",
+  "eligibility": "see source: Eligible structure section",
+  "preconditions": "see source bullet list",
+  "assumptions": "per source",
+  "baseline_candidates": "per source Baselines/Baseline line",
+  "serious_alternatives": "per source Alternatives/Alternative line",
+  "formulation_patterns": "per source (solver/selection contracts)",
+  "solver_options": "per source solver hierarchy (where present)",
+  "validation_requirements": "per source preregistered checks (validation packs)",
+  "failure_modes": "per source Failure modes/Failure triggers",
+  "known_limitations": "per source Replacement triggers / limitations",
+  "sovereignty": "NONE - advisory knowledge bound by hash into selection verdict v2"
+}

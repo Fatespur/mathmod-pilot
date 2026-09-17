@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/cumcm-rule-manifest.schema.json",
+  "title": "CUMCM document rule manifest",
+  "type": "object",
+  "required": ["schema_version", "baseline", "sources", "rules", "conflicts"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "baseline": {"type": "string"},
+    "sources": {"type": "array", "items": {"type": "object", "required": ["path", "kind", "read"], "properties": {"path": {"type": "string"}, "kind": {"enum": ["national", "regional", "school", "template", "submission-system", "skill-baseline"]}, "read": {"type": "boolean"}, "sha256": {"type": "string"}}, "additionalProperties": true}},
+    "rules": {"type": "array", "items": {"type": "object", "required": ["rule_id", "classification", "source", "value", "scope"], "properties": {"rule_id": {"type": "string"}, "classification": {"enum": ["OFFICIAL-MANDATORY", "CONSERVATIVE-SAFETY", "RECOMMENDED-DEFAULT"]}, "source": {"type": "string"}, "source_date": {"type": ["string", "null"]}, "value": {}, "scope": {"type": "string"}, "conflicts": {"type": "array", "items": {"type": "string"}}, "decision": {"type": "string"}, "reason": {"type": "string"}}, "additionalProperties": true}},
+    "conflicts": {"type": "array", "items": {"type": "object", "required": ["sources", "decision", "reason"], "properties": {"sources": {"type": "array", "minItems": 2, "items": {"type": "string"}}, "decision": {"type": "string"}, "reason": {"type": "string"}, "residual_risk": {"type": "string"}}, "additionalProperties": true}}
+  },
+  "additionalProperties": false
+}

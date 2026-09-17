@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "generation_config.schema.json",
+  "type": "object",
+  "properties": {
+    "diagram": {"type": "string"},
+    "question": {"type": ["string", "null"]},
+    "layouts": {"type": "integer", "minimum": 2},
+    "primary_layout": {"type": ["string", "null"]},
+    "alternative_layout": {"type": ["string", "null"]},
+    "engine": {"enum": ["auto", "direct", "graphviz", "elk", "mermaid"]},
+    "theme": {"type": "string"},
+    "transparent": {"type": "boolean"},
+    "background": {"type": "string"},
+    "png_dpi": {"enum": [300, 600]},
+    "png_long_edge": {"type": "integer", "minimum": 3200},
+    "svg_text_mode": {"enum": ["text", "path"]},
+    "target_width_mm": {"type": "number", "exclusiveMinimum": 0},
+    "language": {"type": "string"},
+    "contest_mode": {"type": "boolean"},
+    "strict": {"type": "boolean"},
+    "overwrite": {"type": "boolean"},
+    "seed": {"type": "integer"},
+    "debug": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

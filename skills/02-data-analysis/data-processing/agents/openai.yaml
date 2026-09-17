@@ -1,0 +1,4 @@
+interface:
+  display_name: "建模数据处理"
+  short_description: "用于分析、清洗、转换并验证数学建模任务中的多源原始数据"
+  default_prompt: "Use $data-processing to profile, clean, and validate the provided modeling data."

@@ -1,0 +1,9 @@
+﻿{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"workflow_state.v2",
+"required":["workflow_version","workflow_id","current_stage","previous_state","state_status","completed_stages","active_artifacts","invalidated_artifacts","validation_verdict","limitations","history","error_state","pending_route","selection_authorized"],
+"properties":{
+"workflow_version":{"const":"v2"},
+"current_stage":{"enum":["INIT","PROBLEM_ANALYZED","DATA_READY","DATA_NOT_REQUIRED","FORMULATION_AUTHORIZED","SOLVED","VALIDATED","FIGURES_READY","CONTENT_READY","EVIDENCE_BOUND","DOCUMENT_READY","REVIEW_PASSED","SUBMISSION_READY","CLOSED","ROUTED","REVISION","FAILED_BLOCKED","STOPPED_INTEGRITY","TERMINAL_REVIEW_REQUIRED"]},
+"state_status":{"enum":["VALID","INVALIDATED","INVALIDATED_STALE"]},
+"validation_verdict":{"enum":[null,"PASS","PASS_WITH_LIMITATIONS","REVISE","FAIL"]},
+"limitations":{"type":"array"},"pending_route":{"type":["object","null"]},
+"stale_dependencies":{"type":"array"},"release_blockers":{"type":"array"}}}

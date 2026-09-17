@@ -1,0 +1,8 @@
+﻿{"artifact_invalidation_dag.v1":"single source: orchestrator.py DOWNSTREAM map mirrors this file",
+"01_problem_structure":["02_data_profile","03_candidate_portfolio","04_selection_verdict","05_model_formulation","06_solver_result","07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"02_data_profile":["03_candidate_portfolio","04_selection_verdict","05_model_formulation","06_solver_result","07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"03_candidate_portfolio":["04_selection_verdict","05_model_formulation","06_solver_result","07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"04_selection_verdict":["05_model_formulation","06_solver_result","07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"05_model_formulation":["06_solver_result","07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"06_solver_result":["07_validation_evidence","08_release_decision","09_final_modeling_summary"],
+"07_validation_evidence":["08_release_decision","09_final_modeling_summary"]}

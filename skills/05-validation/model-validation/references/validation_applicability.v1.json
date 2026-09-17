@@ -1,0 +1,16 @@
+{
+  "schema_version":"validation_applicability.v1","policy":"Purpose and structure decide applicability; this registry supplies defaults, not automatic verdicts.",
+  "families":{
+    "statistical":{"baseline":"REQUIRED","oos":"REQUIRED","identifiability":"CONDITIONAL","stability":"CONDITIONAL","ablation":"CONDITIONAL"},
+    "time_series":{"baseline":"REQUIRED","oos":"TEMPORAL_REQUIRED","identifiability":"CONDITIONAL","stability":"REQUIRED","ablation":"CONDITIONAL"},
+    "machine_learning":{"baseline":"REQUIRED","oos":"STRUCTURE_AWARE_REQUIRED","identifiability":"CONDITIONAL","stability":"REQUIRED","ablation":"REQUIRED_FOR_COMPLEX"},
+    "optimization":{"baseline":"REQUIRED","oos":"SCENARIO_CONDITIONAL","identifiability":"NOT_APPLICABLE_UNLESS_ESTIMATED_PARAMETERS","stability":"SOLVER_DEPENDENT","ablation":"CONDITIONAL"},
+    "network_routing":{"baseline":"REQUIRED","oos":"SCENARIO_CONDITIONAL","identifiability":"NOT_APPLICABLE_UNLESS_ESTIMATED_PARAMETERS","stability":"SOLVER_DEPENDENT","ablation":"CONDITIONAL"},
+    "evaluation_decision":{"baseline":"REQUIRED","oos":"CONDITIONAL","identifiability":"CONSTRUCT_CONDITIONAL","stability":"RANK_REQUIRED","ablation":"CONDITIONAL"},
+    "dynamic_ode":{"baseline":"REQUIRED","oos":"CONDITIONAL","identifiability":"REQUIRED_FOR_INFERENCE","observability":"REQUIRED_FOR_STATE_CLAIMS","stability":"REQUIRED","ablation":"CONDITIONAL"},
+    "simulation":{"baseline":"REQUIRED","oos":"TRACE_OR_PATTERN_CONDITIONAL","identifiability":"CALIBRATION_CONDITIONAL","stability":"SEED_REQUIRED","ablation":"RULE_CONDITIONAL"},
+    "multi_objective":{"baseline":"ANCHORS_REQUIRED","oos":"SCENARIO_CONDITIONAL","identifiability":"NOT_APPLICABLE_UNLESS_ESTIMATED_PARAMETERS","stability":"SCALE_AND_SOLVER_REQUIRED","ablation":"CONDITIONAL"},
+    "hybrid":{"baseline":"BEST_SINGLE_COMPONENT_REQUIRED","oos":"END_TO_END_REQUIRED","identifiability":"COMPONENT_CONDITIONAL","stability":"REQUIRED","ablation":"REQUIRED"},
+    "spatial":{"baseline":"REQUIRED","oos":"SPATIAL_REQUIRED","identifiability":"CONDITIONAL","stability":"SCALE_REQUIRED","ablation":"CONDITIONAL"}
+  }
+}

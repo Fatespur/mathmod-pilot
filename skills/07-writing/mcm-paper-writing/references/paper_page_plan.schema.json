@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "subproblem_count",
+    "model_stage_count",
+    "major_model_count",
+    "major_figure_plan",
+    "major_table_plan",
+    "complexity_rationale",
+    "contest",
+    "rule_source",
+    "page_count_scope",
+    "planned_at",
+    "multiple_models",
+    "cross_subproblem_dependency",
+    "framework_figure_expected",
+    "problem_complexity",
+    "target_total_pages",
+    "target_range",
+    "official_page_limit",
+    "section_page_budget"
+  ],
+  "properties": {
+    "subproblem_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "model_stage_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "major_model_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "major_figure_plan": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "major_table_plan": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "complexity_rationale": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "contest": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "rule_source": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "page_count_scope": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "planned_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "multiple_models": {
+      "type": "boolean"
+    },
+    "cross_subproblem_dependency": {
+      "type": "boolean"
+    },
+    "framework_figure_expected": {
+      "type": "boolean"
+    },
+    "problem_complexity": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "VERY_HIGH"
+      ]
+    },
+    "target_total_pages": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "target_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "official_page_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 30
+    },
+    "section_page_budget": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "information_role": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "core_model": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "validation_role": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "planned_pages": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "core_results": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "planned_figures": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "planned_tables": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "required": [
+          "purpose",
+          "information_role",
+          "core_model",
+          "validation_role",
+          "planned_pages",
+          "core_results",
+          "planned_figures",
+          "planned_tables"
+        ]
+      }
+    }
+  }
+}

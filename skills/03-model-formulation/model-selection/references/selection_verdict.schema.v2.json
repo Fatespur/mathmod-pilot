@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://local.codex/schemas/selection_verdict.schema.v2.json",
+  "title":"Selection Verdict v2 R3 overlay",
+  "type":"object",
+  "required":["schema_version","selected_family_id","selected_family_version","family_pack_hashes"],
+  "properties":{
+    "schema_version":{"const":"selection_verdict.schema.v2"},
+    "selected_family_id":{"enum":["NETWORK_ROUTING","SPATIAL","SIMULATION_QUEUE_DES_ABM","DYNAMIC_STATE_SPACE_INVERSE","HYBRID_MODELING"]},
+    "selected_family_version":{"const":"2.0"},
+    "family_pack_hashes":{"type":"object","additionalProperties":false,"required":["selection","solver","validation"],"properties":{"selection":{"type":"string","pattern":"^[0-9a-fA-F]{64}$"},"solver":{"type":"string","pattern":"^[0-9a-fA-F]{64}$"},"validation":{"type":"string","pattern":"^[0-9a-fA-F]{64}$"}}}
+  }
+}

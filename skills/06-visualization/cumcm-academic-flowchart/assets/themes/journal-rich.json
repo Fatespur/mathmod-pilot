@@ -1,0 +1,18 @@
+{
+  "name": "journal-rich",
+  "background": "#FFFFFF",
+  "text": "#253247",
+  "roles": {
+    "data": {"fill": "#2F6FB0", "stroke": "#245381", "text": "#1F2937"},
+    "processing": {"fill": "#1D9AA6", "stroke": "#14727B", "text": "#1F2937"},
+    "feature": {"fill": "#616BC0", "stroke": "#474F91", "text": "#1F2937"},
+    "model": {"fill": "#5146A5", "stroke": "#393174", "text": "#1F2937"},
+    "decision": {"fill": "#D88438", "stroke": "#9E5E27", "text": "#1F2937"},
+    "validation": {"fill": "#C7584D", "stroke": "#8F3D35", "text": "#1F2937"},
+    "result": {"fill": "#4B9A70", "stroke": "#357052", "text": "#1F2937"},
+    "auxiliary": {"fill": "#8C99A8", "stroke": "#65717F", "text": "#1F2937"}
+  },
+  "group": {"fill": "#9BAABD", "stroke": "#718095"},
+  "edge": {"primary": "#44546A", "auxiliary": "#7A8796", "feedback": "#A85C4D"},
+  "opacity": {"node": 0.24, "core": 0.34, "group": 0.09, "stroke": 0.92, "edge_primary": 0.94, "edge_auxiliary": 0.58}
+}

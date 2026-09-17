@@ -1,0 +1,18 @@
+{
+  "name": "forest-science",
+  "background": "#FFFFFF",
+  "text": "#27362D",
+  "roles": {
+    "data": {"fill": "#3A7D73", "stroke": "#2A5B54", "text": "#27362D"},
+    "processing": {"fill": "#59966C", "stroke": "#416F50", "text": "#27362D"},
+    "feature": {"fill": "#6D8F5B", "stroke": "#506943", "text": "#27362D"},
+    "model": {"fill": "#466C5B", "stroke": "#324E42", "text": "#27362D"},
+    "decision": {"fill": "#C18A46", "stroke": "#8C6433", "text": "#27362D"},
+    "validation": {"fill": "#B6624C", "stroke": "#824536", "text": "#27362D"},
+    "result": {"fill": "#459267", "stroke": "#326B4C", "text": "#27362D"},
+    "auxiliary": {"fill": "#89958B", "stroke": "#636C65", "text": "#27362D"}
+  },
+  "group": {"fill": "#A6B6A5", "stroke": "#778877"},
+  "edge": {"primary": "#4A6253", "auxiliary": "#7D8D81", "feedback": "#9D5542"},
+  "opacity": {"node": 0.24, "core": 0.34, "group": 0.1, "stroke": 0.93, "edge_primary": 0.95, "edge_auxiliary": 0.58}
+}

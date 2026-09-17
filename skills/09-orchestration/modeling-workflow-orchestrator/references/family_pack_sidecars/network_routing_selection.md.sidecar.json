@@ -1,0 +1,19 @@
+{
+  "sidecar_version": "r6b.v1",
+  "family_id": "NETWORK_ROUTING",
+  "stage": "selection",
+  "authority": "ADVISORY_ONLY",
+  "source_file": "skills/03-model-formulation/model-selection/references/family_packs/network_routing_selection.md",
+  "source_sha256": "527dfc29eb7f79105b320cd628f1284a67f5a0cafabf5d061dcb3419397e4675",
+  "eligibility": "see source: Eligible structure section",
+  "preconditions": "see source bullet list",
+  "assumptions": "per source",
+  "baseline_candidates": "per source Baselines/Baseline line",
+  "serious_alternatives": "per source Alternatives/Alternative line",
+  "formulation_patterns": "per source (solver/selection contracts)",
+  "solver_options": "per source solver hierarchy (where present)",
+  "validation_requirements": "per source preregistered checks (validation packs)",
+  "failure_modes": "per source Failure modes/Failure triggers",
+  "known_limitations": "per source Replacement triggers / limitations",
+  "sovereignty": "NONE - advisory knowledge bound by hash into selection verdict v2"
+}

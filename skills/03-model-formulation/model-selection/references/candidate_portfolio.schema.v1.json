@@ -1,0 +1,24 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://local.codex/schemas/candidate_portfolio.schema.v1.json",
+  "title":"Candidate Portfolio v1",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","problem_id","problem_structure_sha256","baseline","primary","alternative","fallback","screening_matrix"],
+  "properties":{
+    "schema_version":{"const":"candidate_portfolio.schema.v1"},
+    "problem_id":{"type":"string","minLength":1},
+    "problem_structure_sha256":{"type":"string","pattern":"^[0-9a-fA-F]{64}$"},
+    "baseline":{"$ref":"#/$defs/entry"},
+    "primary":{"$ref":"#/$defs/entry"},
+    "alternative":{"$ref":"#/$defs/entry"},
+    "fallback":{"$ref":"#/$defs/entry"},
+    "screening_matrix":{"type":"array","minItems":10,"items":{"type":"object","additionalProperties":false,"required":["criterion","baseline","primary","alternative","fallback","evidence"],"properties":{"criterion":{"enum":["STRUCTURE_MATCH","PRECONDITIONS","DATA_COMPATIBILITY","IDENTIFIABILITY_RISK","CONSTRAINT_HANDLING","EXPECTED_ACCURACY","ROBUSTNESS_POTENTIAL","INTERPRETABILITY","COMPUTATIONAL_COST","VALIDATION_FEASIBILITY"]},"baseline":{"type":"string","minLength":1},"primary":{"type":"string","minLength":1},"alternative":{"type":"string","minLength":1},"fallback":{"type":"string","minLength":1},"evidence":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}}}}}
+  },
+  "$defs":{
+    "entry":{"oneOf":[{"$ref":"#/$defs/candidate"},{"$ref":"#/$defs/notApplicable"}]},
+    "notApplicable":{"type":"object","additionalProperties":false,"required":["status","role","na_reason"],"properties":{"status":{"const":"N/A"},"role":{"enum":["BASELINE","PRIMARY","ALTERNATIVE","FALLBACK"]},"na_reason":{"type":"string","minLength":20}}},
+    "candidate":{"type":"object","additionalProperties":false,"required":["status","candidate_id","role","model_family","specific_method_if_known","problem_structure_match","required_preconditions","supported_preconditions","violated_preconditions","unknown_preconditions","assumptions","data_requirements","identifiability_requirements","formulation_sketch","solver_class","solver_hierarchy_evidence","expected_complexity","interpretability","expected_failure_modes","failure_signatures","validation_plan","advantages","limitations","why_use","why_not","replacement_trigger"],"properties":{
+      "status":{"const":"CANDIDATE"},"candidate_id":{"type":"string","minLength":1},"role":{"enum":["BASELINE","PRIMARY","ALTERNATIVE","FALLBACK"]},"model_family":{"enum":["statistical","time_series","machine_learning","optimization","network_routing","evaluation_decision","dynamic_ode","simulation","multi_objective","hybrid","spatial"]},"specific_method_if_known":{"type":["string","null"]},"problem_structure_match":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},"required_preconditions":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},"supported_preconditions":{"type":"array","items":{"type":"string","minLength":1}},"violated_preconditions":{"type":"array","items":{"type":"string","minLength":1}},"unknown_preconditions":{"type":"array","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},"data_requirements":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},"identifiability_requirements":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},"formulation_sketch":{"type":"string","minLength":1},"solver_class":{"type":"string","minLength":1},"solver_hierarchy_evidence":{"type":"object","additionalProperties":false,"required":["screened_levels","metaheuristic_allowed","exact_infeasibility_evidence"],"properties":{"screened_levels":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["ANALYTICAL","CONVEX_EXACT","DISCRETE_EXACT","DECOMPOSITION","DETERMINISTIC_NUMERICAL","APPROXIMATION","METAHEURISTIC"]}},"metaheuristic_allowed":{"type":"boolean"},"exact_infeasibility_evidence":{"type":["string","null"],"minLength":20}}},"expected_complexity":{"type":"string","minLength":1},"interpretability":{"type":"string","minLength":1},"expected_failure_modes":{"type":"array","minItems":1,"items":{"type":"string"}},"failure_signatures":{"type":"array","minItems":1,"items":{"type":"string"}},"validation_plan":{"type":"array","minItems":1,"items":{"type":"string"}},"advantages":{"type":"array","minItems":1,"items":{"type":"string"}},"limitations":{"type":"array","minItems":1,"items":{"type":"string"}},"why_use":{"type":"string","minLength":10},"why_not":{"type":"string","minLength":10},"replacement_trigger":{"type":"string","minLength":10}
+    }}
+  }
+}

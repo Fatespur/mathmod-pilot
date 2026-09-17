@@ -1,0 +1,4 @@
+interface:
+  display_name: "模型验证"
+  short_description: "用于通过诊断、敏感性和稳健性分析系统检验模型可靠性"
+  default_prompt: "Use $model-validation to validate this model with appropriate diagnostics and robustness checks."

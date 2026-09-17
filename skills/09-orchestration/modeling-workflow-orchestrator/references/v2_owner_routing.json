@@ -1,0 +1,16 @@
+{
+  "routing_version": "v2.owner.v1",
+  "prefix_map": {
+    "FIGURE_PROVENANCE_FAIL": {"owner": "scipilot-figure-cumcm", "origin": "S5", "rollback_target": "VALIDATED", "blocking": true, "regenerate": ["figure_manifest.json", "figures"]},
+    "FIGURE_CAPTION_MISMATCH": {"owner": "scipilot-figure-cumcm", "origin": "S5", "rollback_target": "CONTENT_READY", "blocking": true, "regenerate": ["caption", "paper.md"]},
+    "NUMERIC_PROVENANCE_FAIL": {"owner": "mcm-paper-writing", "origin": "S6A", "rollback_target": "CONTENT_READY", "blocking": true, "regenerate": ["paper_macros.json", "paper_number_report.json"]},
+    "CLAIM_GATE_FAIL": {"owner": "mcm-paper-writing", "origin": "S6A", "rollback_target": "CONTENT_READY", "blocking": true, "regenerate": ["section_evidence_map.json"]},
+    "REFERENCE_GATE_FAIL": {"owner": "reference-manager", "origin": "S6A/S6B", "rollback_target": "CONTENT_READY", "blocking": true, "regenerate": ["bibliography.json", "reference_validation.json"]},
+    "RENDER_MISSING_FINAL": {"owner": "mcm-paper-writing", "origin": "S6B", "rollback_target": "EVIDENCE_BOUND", "blocking": true, "regenerate": ["DOCX", "PDF"]},
+    "RENDER_INTEGRITY_FAIL": {"owner": "mcm-paper-writing", "origin": "S6B", "rollback_target": "EVIDENCE_BOUND", "blocking": true, "regenerate": ["render_validation.json"]},
+    "LIMITATION_PROPAGATION_FAIL": {"owner": "model-validation->S6A", "origin": "S4/S6A", "rollback_target": "CONTENT_READY", "blocking": true, "regenerate": ["limitations propagation"]},
+    "VALIDATION_S4_FAIL": {"owner": "model-validation", "origin": "S4", "rollback_target": "SOLVED_terminal_scientific", "blocking": true, "regenerate": []},
+    "VALIDATION_S4_REVISE": {"owner": "model-validation", "origin": "S4", "rollback_target": "SOLVED", "blocking": true, "regenerate": ["per revision_token"]},
+    "STALE_ARTIFACTS_PRESENT": {"owner": "artifact_producers", "origin": "varies", "rollback_target": "lowest_stale_producer_state", "blocking": true, "regenerate": ["listed stale artifacts"]}
+  }
+}

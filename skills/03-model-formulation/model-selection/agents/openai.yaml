@@ -1,0 +1,4 @@
+interface:
+  display_name: "Model Selection"
+  short_description: "Structure-first mathematical model selection"
+  default_prompt: "Use $model-selection to build and gate a baseline/primary/alternative/fallback model portfolio from a validated problem structure."

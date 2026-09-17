@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/artifact_validation_receipt.schema.v1.json",
+  "title": "Artifact validation receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_version", "receipt_id", "workflow_id", "artifact_id", "artifact_path",
+    "artifact_sha256", "artifact_schema_id", "producer", "validator", "validator_version",
+    "validator_source", "validator_source_sha256", "registry_version", "registry_sha256",
+    "input_artifacts", "checks", "validation_status", "artifact_verdict", "limitations",
+    "claim_restrictions", "validated_at", "signature_algorithm", "signature"
+  ],
+  "properties": {
+    "receipt_version": {"const": "artifact_validation_receipt.schema.v1"},
+    "receipt_id": {"type": "string", "pattern": "^RCPT-[A-F0-9]{24}$"},
+    "workflow_id": {"type": "string", "minLength": 1},
+    "artifact_id": {"type": "string", "minLength": 1},
+    "artifact_path": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"$ref": "#/$defs/hash"},
+    "artifact_schema_id": {"type": "string", "minLength": 1},
+    "producer": {"type": "string", "minLength": 1},
+    "validator": {"type": "string", "minLength": 1},
+    "validator_version": {"const": "CONTROL_PLANE_V2_1_VALIDATOR.v1"},
+    "validator_source": {"type": "string", "minLength": 1},
+    "validator_source_sha256": {"$ref": "#/$defs/hash"},
+    "registry_version": {"const": "canonical_artifact_registry.v2.1.0"},
+    "registry_sha256": {"$ref": "#/$defs/hash"},
+    "input_artifacts": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/hash"}
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "validation_status": {"const": "VALIDATED"},
+    "artifact_verdict": {"type": ["string", "null"]},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "claim_restrictions": {"type": "array", "items": {"type": "string"}},
+    "validated_at": {"type": "string", "format": "date-time"},
+    "signature_algorithm": {"const": "HMAC-SHA256"},
+    "signature": {"$ref": "#/$defs/hash"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

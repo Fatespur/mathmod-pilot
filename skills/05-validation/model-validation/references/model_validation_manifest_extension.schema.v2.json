@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/model-validation-manifest-extension.schema.v2.json",
+  "title": "R2 model-validation release extension",
+  "type": "object",
+  "required": ["stage", "execution_status", "release_status", "validation_plan", "evidence_bundle", "failure_envelope", "model_validation_gate"],
+  "properties": {
+    "stage": {"const": "S4"},
+    "execution_status": {"enum": ["in_progress", "completed", "blocked", "failed"]},
+    "release_status": {"enum": ["PASS", "PASS_WITH_LIMITATIONS", "REVISE", "FAIL"]},
+    "validation_plan": {"type": "object"},
+    "evidence_bundle": {"type": "object"},
+    "failure_envelope": {"type": "object"},
+    "model_validation_gate": {"type": "object"},
+    "downstream_authorization": {
+      "type": "object",
+      "required": ["allowed_stages", "claim_restrictions_acknowledged"],
+      "properties": {
+        "allowed_stages": {"type": "array", "items": {"enum": ["S5", "S6", "S7"]}, "uniqueItems": true},
+        "claim_restrictions_acknowledged": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"release_status": {"enum": ["REVISE", "FAIL"]}}},
+      "then": {
+        "required": ["downstream_authorization"],
+        "properties": {"downstream_authorization": {"properties": {"allowed_stages": {"maxItems": 0}}}}
+      }
+    },
+    {
+      "if": {"properties": {"release_status": {"const": "PASS_WITH_LIMITATIONS"}}},
+      "then": {"required": ["downstream_authorization"]}
+    }
+  ],
+  "additionalProperties": false
+}

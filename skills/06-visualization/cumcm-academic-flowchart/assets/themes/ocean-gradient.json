@@ -1,0 +1,18 @@
+{
+  "name": "ocean-gradient",
+  "background": "#FFFFFF",
+  "text": "#173247",
+  "roles": {
+    "data": {"fill": "#2F80C9", "stroke": "#1F5F98", "text": "#173247"},
+    "processing": {"fill": "#27A6B2", "stroke": "#1B7881", "text": "#173247"},
+    "feature": {"fill": "#4B8FD8", "stroke": "#3469A1", "text": "#173247"},
+    "model": {"fill": "#3266A8", "stroke": "#234977", "text": "#173247"},
+    "decision": {"fill": "#C98B45", "stroke": "#926532", "text": "#173247"},
+    "validation": {"fill": "#B85D63", "stroke": "#854247", "text": "#173247"},
+    "result": {"fill": "#329F88", "stroke": "#257462", "text": "#173247"},
+    "auxiliary": {"fill": "#8299A8", "stroke": "#5E707C", "text": "#173247"}
+  },
+  "group": {"fill": "#8CB5C7", "stroke": "#668A9B"},
+  "edge": {"primary": "#36596E", "auxiliary": "#718B9A", "feedback": "#A5555E"},
+  "opacity": {"node": 0.23, "core": 0.33, "group": 0.09, "stroke": 0.92, "edge_primary": 0.94, "edge_auxiliary": 0.58}
+}

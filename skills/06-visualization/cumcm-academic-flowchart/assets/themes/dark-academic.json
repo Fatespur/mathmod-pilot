@@ -1,0 +1,18 @@
+{
+  "name": "dark-academic",
+  "background": "#16202C",
+  "text": "#F3F6FA",
+  "roles": {
+    "data": {"fill": "#2F78B8", "stroke": "#72B7F0", "text": "#F8FAFC"},
+    "processing": {"fill": "#168F99", "stroke": "#62D4D8", "text": "#F8FAFC"},
+    "feature": {"fill": "#655FC0", "stroke": "#AAA6F5", "text": "#F8FAFC"},
+    "model": {"fill": "#5144A5", "stroke": "#9F95EC", "text": "#F8FAFC"},
+    "decision": {"fill": "#B56D2E", "stroke": "#F0AD69", "text": "#F8FAFC"},
+    "validation": {"fill": "#A54740", "stroke": "#E98C84", "text": "#F8FAFC"},
+    "result": {"fill": "#397D59", "stroke": "#7EC49D", "text": "#F8FAFC"},
+    "auxiliary": {"fill": "#5F6B7A", "stroke": "#A7B2C0", "text": "#F8FAFC"}
+  },
+  "group": {"fill": "#34455B", "stroke": "#75869B"},
+  "edge": {"primary": "#C8D1DC", "auxiliary": "#8593A4", "feedback": "#E39A8E"},
+  "opacity": {"node": 0.78, "core": 0.88, "group": 0.28, "stroke": 0.98, "edge_primary": 0.98, "edge_auxiliary": 0.7}
+}

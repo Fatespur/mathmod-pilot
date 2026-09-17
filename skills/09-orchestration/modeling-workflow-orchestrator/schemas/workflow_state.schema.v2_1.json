@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/workflow_state.schema.v2_1.json",
+  "title": "CUMCM control-plane workflow state V2.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workflow_version", "workflow_id", "current_stage", "previous_stage", "state_status",
+    "completed_stages", "active_artifacts", "invalidated_artifacts", "validation_verdict",
+    "limitations", "claim_restrictions", "selection_authorized", "history", "history_head",
+    "pending_route", "revision_history", "consumed_revision_tokens", "release_blockers",
+    "created_at", "updated_at", "registry_version", "registry_sha256", "state_hmac"
+  ],
+  "properties": {
+    "workflow_version": {"const": "V2.1"},
+    "workflow_id": {"type": "string", "minLength": 1},
+    "current_stage": {"enum": ["INIT", "S0_BOOTSTRAPPED", "S1_STRUCTURED", "DATA_READY", "DATA_NOT_REQUIRED", "SELECTION_AUTHORIZED", "S3_EXECUTED", "S4_RELEASED", "S5_EVIDENCE_READY", "S6_CONTENT_BOUND", "S6_DOCUMENT_READY", "S7_REVIEWED", "SUBMISSION_AUTHORIZED", "CLOSED_AND_SEALED", "FAILED_BLOCKED"]},
+    "previous_stage": {"type": ["string", "null"]},
+    "state_status": {"enum": ["VALID", "REVISION_REQUIRED", "INVALIDATED", "FAILED_BLOCKED", "SEALED"]},
+    "completed_stages": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "active_artifacts": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/artifact_entry"}
+    },
+    "invalidated_artifacts": {"type": "array", "items": {"$ref": "#/$defs/invalidation"}},
+    "validation_verdict": {"enum": [null, "PASS", "PASS_WITH_LIMITATIONS", "REVISE", "FAIL"]},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "claim_restrictions": {"type": "array", "items": {"type": "string"}},
+    "selection_authorized": {"type": "boolean"},
+    "history": {"type": "array", "items": {"$ref": "#/$defs/history_event"}},
+    "history_head": {"$ref": "#/$defs/hash"},
+    "pending_route": {"type": ["object", "null"]},
+    "revision_history": {"type": "array", "items": {"type": "object"}},
+    "consumed_revision_tokens": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "release_blockers": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "registry_version": {"const": "canonical_artifact_registry.v2.1.0"},
+    "registry_sha256": {"$ref": "#/$defs/hash"},
+    "state_hmac": {"$ref": "#/$defs/hash"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "receipt_path", "receipt_sha256", "producer", "validated_at"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/hash"},
+        "receipt_path": {"type": "string", "minLength": 1},
+        "receipt_sha256": {"$ref": "#/$defs/hash"},
+        "producer": {"type": "string", "minLength": 1},
+        "validated_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "invalidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "previous_sha256", "reason", "invalidated_at"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "previous_sha256": {"$ref": "#/$defs/hash"},
+        "reason": {"type": "string", "minLength": 1},
+        "invalidated_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "history_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "from", "to", "timestamp", "trigger", "owner", "artifacts", "previous_event_hash", "event_hash"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1},
+        "from": {"type": ["string", "null"]},
+        "to": {"type": "string", "minLength": 1},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "trigger": {"type": "string", "minLength": 1},
+        "owner": {"type": "string", "minLength": 1},
+        "artifacts": {"type": "array", "items": {"type": "string"}},
+        "previous_event_hash": {"$ref": "#/$defs/hash"},
+        "event_hash": {"$ref": "#/$defs/hash"}
+      }
+    }
+  }
+}

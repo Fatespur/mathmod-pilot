@@ -1,0 +1,4 @@
+interface:
+  display_name: "科研可视化顾问"
+  short_description: "用于完成数据剖析、科学选图、绘制、矢量导出与视觉质量检查"
+  default_prompt: "Use $scipilot-figure-skill to select, render, and visually verify an appropriate scientific chart."

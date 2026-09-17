@@ -1,0 +1,29 @@
+{
+  "registry_version": "v2.1.reason.v1",
+  "exact_routes": {
+    "PROBLEM_STRUCTURE_INVALID": {"owner": "problem-analyzer", "rollback_target": "S0_BOOTSTRAPPED", "blocking": true},
+    "DATA_PROFILE_INVALID": {"owner": "data-processing", "rollback_target": "S1_STRUCTURED", "blocking": true},
+    "SELECTION_NOT_AUTHORIZED": {"owner": "model-selection", "rollback_target": "DATA_BRANCH", "blocking": true},
+    "S3_BUNDLE_INVALID": {"owner": "mle-solver", "rollback_target": "SELECTION_AUTHORIZED", "blocking": true},
+    "VALIDATION_REVISE_FORMULATION": {"owner": "mle-solver", "rollback_target": "SELECTION_AUTHORIZED", "blocking": true},
+    "VALIDATION_REVISE_DATA": {"owner": "data-processing", "rollback_target": "S1_STRUCTURED", "blocking": true},
+    "VALIDATION_SIMPLIFY_MODEL": {"owner": "mle-solver", "rollback_target": "SELECTION_AUTHORIZED", "blocking": true},
+    "VALIDATION_CHANGE_MODEL": {"owner": "model-selection", "rollback_target": "DATA_BRANCH", "blocking": true},
+    "VALIDATION_REJECT_MODEL": {"owner": "model-selection", "rollback_target": "DATA_BRANCH", "blocking": true},
+    "VALIDATION_COLLECT_MORE_DATA": {"owner": "data-processing", "rollback_target": "S1_STRUCTURED", "blocking": true},
+    "VALIDATION_RERUN_SOLVER": {"owner": "mle-solver", "rollback_target": "SELECTION_AUTHORIZED", "blocking": true},
+    "VALIDATION_RERUN_VALIDATION": {"owner": "model-validation", "rollback_target": "S3_EXECUTED", "blocking": true},
+    "VALIDATION_S4_FAIL": {"owner": "model-validation", "rollback_target": "FAILED_BLOCKED", "blocking": true, "terminal": true},
+    "FIGURE_PROVENANCE_FAIL": {"owner": "scipilot-figure-cumcm", "rollback_target": "S4_RELEASED", "blocking": true},
+    "NUMERIC_PROVENANCE_FAIL": {"owner": "mcm-paper-writing", "rollback_target": "S5_EVIDENCE_READY", "blocking": true},
+    "CLAIM_GATE_FAIL": {"owner": "mcm-paper-writing", "rollback_target": "S5_EVIDENCE_READY", "blocking": true},
+    "REFERENCE_GATE_FAIL": {"owner": "reference-manager", "rollback_target": "S5_EVIDENCE_READY", "blocking": true},
+    "S6_CONTENT_GATE_FAIL": {"owner": "mcm-paper-writing+reference-manager", "rollback_target": "S5_EVIDENCE_READY", "blocking": true},
+    "RENDER_INTEGRITY_FAIL": {"owner": "mcm-paper-writing", "rollback_target": "S6_CONTENT_BOUND", "blocking": true},
+    "S7_PUBLICATION_GATE_FAIL": {"owner": "paper-review", "rollback_target": "S6_DOCUMENT_READY", "blocking": true},
+    "LIMITATION_PROPAGATION_FAIL": {"owner": "model-validation->mcm-paper-writing", "rollback_target": "S5_EVIDENCE_READY", "blocking": true},
+    "SUBMISSION_AUTHORIZATION_FAIL": {"owner": "submission-governance", "rollback_target": "S7_REVIEWED", "blocking": true},
+    "STALE_ARTIFACTS_PRESENT": {"owner": "artifact producer named by receipt", "rollback_target": "LOWEST_INVALIDATED_STAGE", "blocking": true},
+    "STATE_INTEGRITY_FAIL": {"owner": "modeling-workflow-orchestrator", "rollback_target": "NONE", "blocking": true, "terminal": true}
+  }
+}

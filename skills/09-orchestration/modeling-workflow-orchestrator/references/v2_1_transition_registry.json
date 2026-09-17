@@ -1,0 +1,146 @@
+{
+  "registry_version": "v2.1.transition.v1",
+  "control_plane_version": "V2.1",
+  "canonical_states": [
+    "INIT",
+    "S0_BOOTSTRAPPED",
+    "S1_STRUCTURED",
+    "DATA_READY",
+    "DATA_NOT_REQUIRED",
+    "SELECTION_AUTHORIZED",
+    "S3_EXECUTED",
+    "S4_RELEASED",
+    "S5_EVIDENCE_READY",
+    "S6_CONTENT_BOUND",
+    "S6_DOCUMENT_READY",
+    "S7_REVIEWED",
+    "SUBMISSION_AUTHORIZED",
+    "CLOSED_AND_SEALED",
+    "FAILED_BLOCKED"
+  ],
+  "transitions": [
+    {
+      "from": "INIT",
+      "to": "S0_BOOTSTRAPPED",
+      "owner": "brainstorming+modeling-workflow-orchestrator",
+      "gate": "S0_BOOTSTRAP_RECEIPTS",
+      "required": ["00_task_brief", "00_pipeline_manifest"]
+    },
+    {
+      "from": "S0_BOOTSTRAPPED",
+      "to": "S1_STRUCTURED",
+      "owner": "problem-analyzer",
+      "gate": "S1_STRUCTURE_RECEIPT",
+      "required": ["01_problem_structure"]
+    },
+    {
+      "from": "S1_STRUCTURED",
+      "to": "DATA_READY",
+      "owner": "data-processing",
+      "gate": "DATA_PROFILE_RECEIPT",
+      "required": ["02_data_profile"]
+    },
+    {
+      "from": "S1_STRUCTURED",
+      "to": "DATA_NOT_REQUIRED",
+      "owner": "problem-analyzer+modeling-workflow-orchestrator",
+      "gate": "NO_DATA_DECISION_RECEIPT",
+      "required": ["02_data_not_required"],
+      "consume": {"artifact": "02_data_not_required", "field": "decision", "equals": "DATA_NOT_REQUIRED"}
+    },
+    {
+      "from": "DATA_READY",
+      "to": "SELECTION_AUTHORIZED",
+      "owner": "model-selection",
+      "gate": "SELECTION_OWNER_RECEIPT",
+      "required": ["03_candidate_portfolio", "04_selection_verdict"],
+      "consume": {"artifact": "04_selection_verdict", "field": "anti_template_gate.verdict", "equals": "ALLOW_FORMULATION"},
+      "on_fail_reason": "SELECTION_NOT_AUTHORIZED"
+    },
+    {
+      "from": "DATA_NOT_REQUIRED",
+      "to": "SELECTION_AUTHORIZED",
+      "owner": "model-selection",
+      "gate": "SELECTION_OWNER_RECEIPT",
+      "required": ["03_candidate_portfolio", "04_selection_verdict"],
+      "consume": {"artifact": "04_selection_verdict", "field": "anti_template_gate.verdict", "equals": "ALLOW_FORMULATION"},
+      "on_fail_reason": "SELECTION_NOT_AUTHORIZED"
+    },
+    {
+      "from": "SELECTION_AUTHORIZED",
+      "to": "S3_EXECUTED",
+      "owner": "mle-solver",
+      "gate": "S3_EXECUTION_BUNDLE_RECEIPTS",
+      "required": ["05_model_spec", "05_solver_manifest", "06_solver_result", "06_validation_handoff"]
+    },
+    {
+      "from": "S3_EXECUTED",
+      "to": "S4_RELEASED",
+      "owner": "model-validation",
+      "gate": "S4_DETERMINISTIC_RELEASE_RECEIPT",
+      "required": ["07_validation_plan", "07_validation_evidence", "07_failure_envelope", "08_release_decision"],
+      "consume": {"artifact": "08_release_decision", "field": "verdict", "in": ["PASS", "PASS_WITH_LIMITATIONS"]},
+      "on_fail_reason": "VALIDATION_ROUTE_REQUIRED"
+    },
+    {
+      "from": "S4_RELEASED",
+      "to": "S5_EVIDENCE_READY",
+      "owner": "scipilot-figure-cumcm",
+      "gate": "S5_PROVENANCE_RECEIPTS",
+      "required": ["09_figure_manifest", "09_figure_provenance"],
+      "consume": {"artifact": "09_figure_provenance", "field": "status", "equals": "PASS"},
+      "on_fail_reason": "FIGURE_PROVENANCE_FAIL"
+    },
+    {
+      "from": "S5_EVIDENCE_READY",
+      "to": "S6_CONTENT_BOUND",
+      "owner": "mcm-paper-writing+reference-manager",
+      "gate": "S6_CONTENT_EVIDENCE_RECEIPTS",
+      "required": ["10_paper_source", "10_bibliography", "11_in_text_citations", "11_paper_macros", "11_number_report", "11_reference_validation", "11_section_evidence_map", "11_claim_gate"],
+      "consume_all": [
+        {"artifact": "11_number_report", "field": "status", "equals": "passed"},
+        {"artifact": "11_claim_gate", "field": "gate", "equals": "PASS"},
+        {"artifact": "11_claim_gate", "field": "render_authorized", "equals": true},
+        {"artifact": "11_reference_validation", "field": "reference_graph_valid", "equals": true},
+        {"artifact": "11_reference_validation", "field": "render_authorized", "equals": true}
+      ],
+      "on_fail_reason": "S6_CONTENT_GATE_FAIL"
+    },
+    {
+      "from": "S6_CONTENT_BOUND",
+      "to": "S6_DOCUMENT_READY",
+      "owner": "mcm-paper-writing",
+      "gate": "S6_RENDER_RECEIPTS",
+      "required": ["12_pre_render_authorization", "12_paper_docx", "12_paper_pdf", "12_render_validation"],
+      "consume_all": [
+        {"artifact": "12_pre_render_authorization", "field": "authorized", "equals": true},
+        {"artifact": "12_pre_render_authorization", "field": "production_mode", "equals": "PRODUCTION"},
+        {"artifact": "12_render_validation", "field": "status", "equals": "PASS"}
+      ],
+      "on_fail_reason": "RENDER_INTEGRITY_FAIL"
+    },
+    {
+      "from": "S6_DOCUMENT_READY",
+      "to": "S7_REVIEWED",
+      "owner": "paper-review",
+      "gate": "S7_REVIEW_AND_PUBLICATION_RECEIPTS",
+      "required": ["13_s7_review_report", "13_s7_publication_gate"],
+      "consume": {"artifact": "13_s7_publication_gate", "field": "verdict", "in": ["PASS", "PASS_WITH_LIMITATIONS"]},
+      "on_fail_reason": "S7_PUBLICATION_GATE_FAIL"
+    },
+    {
+      "from": "S7_REVIEWED",
+      "to": "SUBMISSION_AUTHORIZED",
+      "owner": "submission-governance",
+      "gate": "SUBMISSION_AUTHORIZATION_RECEIPTS",
+      "required": ["14_submission_manifest", "14_anonymity_record", "14_package_authorization"],
+      "consume_all": [
+        {"artifact": "14_submission_manifest", "field": "limitations_preserved", "equals": true},
+        {"artifact": "14_anonymity_record", "field": "status", "equals": "PASS"},
+        {"artifact": "14_package_authorization", "field": "authorized", "equals": true},
+        {"artifact": "14_package_authorization", "field": "human_checks_resolved", "equals": true}
+      ],
+      "on_fail_reason": "SUBMISSION_AUTHORIZATION_FAIL"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "数学建模论文与 Word 生成"
+  short_description: "基于可追溯模型产物生成并验证竞赛论文、DOCX 与 PDF"
+  default_prompt: "Use $mcm-paper-writing to draft, typeset, generate, render, and validate this competition paper in the correct contest language."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "数学建模求解器"
+  short_description: "用于建立、数值求解并校验竞赛数学模型、算法实现与结果"
+  default_prompt: "Use $mle-solver to formulate, solve, and verify this mathematical modeling problem."

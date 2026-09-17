@@ -1,0 +1,18 @@
+{
+  "name": "editorial-pastel",
+  "background": "#FFFFFF",
+  "text": "#364052",
+  "roles": {
+    "data": {"fill": "#6D9EC6", "stroke": "#4E7392", "text": "#364052"},
+    "processing": {"fill": "#6FB1A7", "stroke": "#508179", "text": "#364052"},
+    "feature": {"fill": "#8A8AC8", "stroke": "#646492", "text": "#364052"},
+    "model": {"fill": "#7A70B2", "stroke": "#585181", "text": "#364052"},
+    "decision": {"fill": "#D6A05A", "stroke": "#9C7441", "text": "#364052"},
+    "validation": {"fill": "#CD7772", "stroke": "#955653", "text": "#364052"},
+    "result": {"fill": "#79A87B", "stroke": "#587A59", "text": "#364052"},
+    "auxiliary": {"fill": "#A1A7B1", "stroke": "#747A82", "text": "#364052"}
+  },
+  "group": {"fill": "#B8BBC5", "stroke": "#878B97"},
+  "edge": {"primary": "#596476", "auxiliary": "#8B94A2", "feedback": "#A9635F"},
+  "opacity": {"node": 0.2, "core": 0.29, "group": 0.07, "stroke": 0.9, "edge_primary": 0.92, "edge_auxiliary": 0.55}
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "r3.family_cases.v1",
+  "cases": [
+    {"id":"N1","family":"NETWORK_ROUTING","deceptive":true,"facts":{"graph":true,"depot":true,"demand":true,"capacity":true,"vehicles":true},"expected_route":"CVRP","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"N2","family":"NETWORK_ROUTING","deceptive":false,"facts":{"graph":true,"source_destination":true,"nonnegative_weights":true},"expected_route":"SHORTEST_PATH","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"N3","family":"NETWORK_ROUTING","deceptive":false,"facts":{"graph":true,"supply_demand":true,"arc_capacity":true,"flow_conservation":true},"expected_route":"MIN_COST_FLOW","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"N4","family":"NETWORK_ROUTING","deceptive":true,"facts":{"graph":true,"visit_all":true,"small_instance":true},"expected_route":"TSP_EXACT_FIRST","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"S1","family":"SPATIAL","deceptive":true,"facts":{"coordinates":true,"spatial_dependence":true,"random_kfold":true,"crs_valid":true},"expected_route":"SPATIAL","expected_contract_effect":"REQUIRE_S4_REVISE"},
+    {"id":"S2","family":"SPATIAL","deceptive":true,"facts":{"coordinates":true,"residual_spatial_autocorrelation":false,"region_prediction":false,"crs_valid":true},"expected_route":"NON_SPATIAL_BASELINE","expected_contract_effect":"REJECT_COMPLEXITY_AT_SELECTION"},
+    {"id":"S3","family":"SPATIAL","deceptive":false,"facts":{"coordinates":true,"residual_spatial_autocorrelation":true,"region_prediction":true,"crs_valid":true,"spatial_block_cv":true},"expected_route":"SPATIAL","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"S4","family":"SPATIAL","deceptive":true,"facts":{"coordinates":true,"projection_error":true,"region_prediction":true},"expected_route":"SPATIAL","expected_contract_effect":"REQUIRE_S4_FAIL"},
+    {"id":"Q1","family":"SIMULATION_QUEUE_DES_ABM","deceptive":false,"facts":{"queue_structure":true,"poisson_arrivals":true,"exponential_service":true,"stationary":true,"independent":true,"servers_defined":true},"expected_route":"M_M_C","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"Q2","family":"SIMULATION_QUEUE_DES_ABM","deceptive":true,"facts":{"queue_structure":true,"heavy_tail_service":true,"time_varying_arrivals":true},"expected_route":"G_G_C_OR_DES","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"Q3","family":"SIMULATION_QUEUE_DES_ABM","deceptive":true,"facts":{"des":true,"mean_stable":true,"warmup_checked":false,"seeds":true,"replications":true},"expected_route":"DES","expected_contract_effect":"REQUIRE_S4_REVISE"},
+    {"id":"Q4","family":"SIMULATION_QUEUE_DES_ABM","deceptive":true,"facts":{"abm":true,"rules_calibrated":false,"seeds":true,"replications":true},"expected_route":"ABM","expected_contract_effect":"REQUIRE_S4_LIMIT_OR_REVISE"},
+    {"id":"D1","family":"DYNAMIC_STATE_SPACE_INVERSE","deceptive":true,"facts":{"ode":true,"fits_data":true,"identifiable":false,"purpose":"PARAMETER_INFERENCE"},"expected_route":"DYNAMIC_INVERSE","expected_contract_effect":"REQUIRE_S4_REVISE_OR_FAIL"},
+    {"id":"D2","family":"DYNAMIC_STATE_SPACE_INVERSE","deceptive":true,"facts":{"ode":true,"identifiable":false,"prediction_stable":true,"purpose":"PREDICTION_ONLY"},"expected_route":"DYNAMIC_INVERSE","expected_contract_effect":"REQUIRE_S4_LIMIT_CLAIMS"},
+    {"id":"D3","family":"DYNAMIC_STATE_SPACE_INVERSE","deceptive":false,"facts":{"latent_state":true,"noisy_measurements":true,"transition_basis":true},"expected_route":"STATE_SPACE_FILTERING","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"D4","family":"DYNAMIC_STATE_SPACE_INVERSE","deceptive":true,"facts":{"univariate_trend":true,"latent_state_basis":false,"mechanism_basis":false},"expected_route":"TIME_SERIES_BASELINE","expected_contract_effect":"REJECT_FAMILY_AT_SELECTION"},
+    {"id":"H1","family":"HYBRID_MODELING","deceptive":true,"facts":{"hybrid":true,"training_gain":true,"test_material_gain":false,"ablation":true},"expected_route":"SIMPLE_COMPONENT","expected_contract_effect":"REJECT_COMPLEXITY_AT_SELECTION"},
+    {"id":"H2","family":"HYBRID_MODELING","deceptive":true,"facts":{"prediction_to_optimization":true,"uncertainty_propagated":false,"policy_stable":false,"ablation":true},"expected_route":"HYBRID","expected_contract_effect":"REQUIRE_S4_REVISE"},
+    {"id":"H3","family":"HYBRID_MODELING","deceptive":false,"facts":{"hybrid":true,"test_material_gain":true,"ablation":true,"all_components_material":true,"uncertainty_propagated":true,"policy_stable":true},"expected_route":"HYBRID","expected_contract_effect":"ELIGIBLE_FOR_SELECTION"},
+    {"id":"H4","family":"HYBRID_MODELING","deceptive":true,"facts":{"hybrid":true,"ablation":true,"redundant_components":true},"expected_route":"SIMPLE_COMPONENT","expected_contract_effect":"REQUIRE_SIMPLIFICATION"}
+  ]
+}

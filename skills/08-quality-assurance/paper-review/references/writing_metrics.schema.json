@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Competition writing quality diagnostics (not official rules)",
+  "type": "object",
+  "required": [
+    "result_first_coverage",
+    "core_answer_visibility",
+    "strength_visibility",
+    "framework_figure_present",
+    "core_figure_count",
+    "defensive_phrase_count",
+    "repeated_limitation_clusters",
+    "abstract_limitation_sentences",
+    "over_defensive_paragraphs",
+    "underselling_findings",
+    "diagnostic_evidence",
+    "planned_page_target",
+    "rendered_page_count",
+    "major_figure_count",
+    "major_table_count",
+    "content_gap_count",
+    "page_padding_findings",
+    "planned_page_range",
+    "page_budget_deviation",
+    "section_balance_status",
+    "information_density_status",
+    "page_planning_quality"
+  ],
+  "properties": {
+    "result_first_coverage": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "core_answer_visibility": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "strength_visibility": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "framework_figure_present": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "core_figure_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "defensive_phrase_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "repeated_limitation_clusters": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "abstract_limitation_sentences": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "over_defensive_paragraphs": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "underselling_findings": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "diagnostic_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "planned_page_target": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "rendered_page_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "major_figure_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "major_table_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "content_gap_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "page_padding_findings": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "planned_page_range": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "number",
+        "minimum": 0
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "page_budget_deviation": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Rendered complete-paper pages minus planned target, in pages; null until rendering."
+    },
+    "section_balance_status": {
+      "enum": [
+        "ADEQUATE",
+        "REVIEW_REQUIRED",
+        "DEFICIENT",
+        null
+      ]
+    },
+    "information_density_status": {
+      "enum": [
+        "ADEQUATE",
+        "REVIEW_REQUIRED",
+        "DEFICIENT",
+        null
+      ]
+    },
+    "page_planning_quality": {
+      "enum": [
+        "ADEQUATE",
+        "REVIEW_REQUIRED",
+        "DEFICIENT",
+        null
+      ]
+    }
+  },
+  "additionalProperties": true
+}

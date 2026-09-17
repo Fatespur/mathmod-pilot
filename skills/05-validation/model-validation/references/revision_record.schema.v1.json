@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/revision_record.schema.v1.json",
+  "title": "Revision Record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revision_sequence", "revision_token", "problem_id", "model_id", "old_artifact_hash", "failed_checks", "required_actions", "owner_stage", "new_artifact_hash", "change_type", "change_summary", "validation_plan_changes", "revalidation_checks", "revalidation_status", "created_at"],
+  "properties": {
+    "schema_version": {"const": "revision_record.schema.v1"},
+    "revision_sequence": {"type": "integer", "minimum": 1},
+    "revision_token": {"type": "string", "pattern": "^R2REV-[A-Za-z0-9._-]+$"},
+    "problem_id": {"type": "string", "minLength": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "old_artifact_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "failed_checks": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "required_actions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "owner_stage": {"enum": ["PROBLEM_FORMULATION", "DATA_PROCESSING", "MODEL_SELECTION", "SOLVER", "MODEL_VALIDATION"]},
+    "new_artifact_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "change_type": {"enum": ["PRESENTATION_ONLY", "DATA_SPLIT", "OBJECTIVE", "MODEL_EQUATION", "FEATURE_SET", "SOLVER", "PARAMETER_ESTIMATION", "VALIDATION_PLAN"]},
+    "change_summary": {"type": "string", "minLength": 10},
+    "validation_plan_changes": {"type": "array", "items": {"type": "string"}},
+    "revalidation_checks": {"type": "array", "items": {"type": "string"}},
+    "revalidation_status": {"enum": ["PENDING", "IN_PROGRESS", "PASS", "FAIL"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

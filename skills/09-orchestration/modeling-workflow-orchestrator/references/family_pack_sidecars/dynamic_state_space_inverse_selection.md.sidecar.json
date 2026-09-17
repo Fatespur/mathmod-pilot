@@ -1,0 +1,19 @@
+{
+  "sidecar_version": "r6b.v1",
+  "family_id": "DYNAMIC_STATE_SPACE_INVERSE",
+  "stage": "selection",
+  "authority": "ADVISORY_ONLY",
+  "source_file": "skills/03-model-formulation/model-selection/references/family_packs/dynamic_state_space_inverse_selection.md",
+  "source_sha256": "dd031772f2801bc935bcfc5533c3a9df6625712dc5a45943b63fcc0c9c88a41a",
+  "eligibility": "see source: Eligible structure section",
+  "preconditions": "see source bullet list",
+  "assumptions": "per source",
+  "baseline_candidates": "per source Baselines/Baseline line",
+  "serious_alternatives": "per source Alternatives/Alternative line",
+  "formulation_patterns": "per source (solver/selection contracts)",
+  "solver_options": "per source solver hierarchy (where present)",
+  "validation_requirements": "per source preregistered checks (validation packs)",
+  "failure_modes": "per source Failure modes/Failure triggers",
+  "known_limitations": "per source Replacement triggers / limitations",
+  "sovereignty": "NONE - advisory knowledge bound by hash into selection verdict v2"
+}

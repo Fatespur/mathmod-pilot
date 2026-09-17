@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cumcm-academic-flowchart"
+version = "1.0.0"
+description = "Offline academic flowchart generator for mathematical modeling competitions"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = ["Pillow>=10.0"]
+
+[project.optional-dependencies]
+documents = ["pypdf>=4.0", "python-docx>=1.1", "openpyxl>=3.1", "PyYAML>=6.0"]
+validation = ["jsonschema>=4.0"]
+svg-path = ["matplotlib>=3.8"]
+test = ["pytest>=8.0"]
+
+[project.scripts]
+cumcm-flowchart = "cumcm_flowchart:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

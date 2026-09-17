@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/cumcm-validation-report.schema.json",
+  "title": "CUMCM document validation report",
+  "type": "object",
+  "required": ["schema_version", "baseline", "summary", "checks", "evidence"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "baseline": {"type": "string"},
+    "summary": {"type": "object", "required": ["PASS", "WARNING", "FAIL", "NOT APPLICABLE"], "additionalProperties": {"type": "integer", "minimum": 0}},
+    "checks": {"type": "array", "items": {"type": "object", "required": ["id", "category", "status", "message_zh", "evidence", "rule_class", "rule_source", "automatic"], "properties": {"id": {"type": "string"}, "category": {"type": "string"}, "status": {"enum": ["PASS", "WARNING", "FAIL", "NOT APPLICABLE"]}, "message_zh": {"type": "string"}, "evidence": {"type": "array", "items": {"type": "string"}}, "rule_class": {"enum": ["OFFICIAL-MANDATORY", "CONSERVATIVE-SAFETY", "RECOMMENDED-DEFAULT"]}, "rule_source": {"type": "string"}, "automatic": {"type": "boolean"}, "manual_action": {"type": ["string", "null"]}}, "additionalProperties": false}},
+    "evidence": {"type": "object"}
+  },
+  "additionalProperties": false
+}

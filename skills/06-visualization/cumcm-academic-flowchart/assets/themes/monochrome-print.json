@@ -1,0 +1,18 @@
+{
+  "name": "monochrome-print",
+  "background": "#FFFFFF",
+  "text": "#202020",
+  "roles": {
+    "data": {"fill": "#7A7A7A", "stroke": "#3E3E3E", "text": "#202020"},
+    "processing": {"fill": "#929292", "stroke": "#4F4F4F", "text": "#202020"},
+    "feature": {"fill": "#686868", "stroke": "#363636", "text": "#202020"},
+    "model": {"fill": "#515151", "stroke": "#282828", "text": "#202020"},
+    "decision": {"fill": "#A2A2A2", "stroke": "#555555", "text": "#202020"},
+    "validation": {"fill": "#858585", "stroke": "#454545", "text": "#202020"},
+    "result": {"fill": "#B0B0B0", "stroke": "#5C5C5C", "text": "#202020"},
+    "auxiliary": {"fill": "#C0C0C0", "stroke": "#6A6A6A", "text": "#202020"}
+  },
+  "group": {"fill": "#D8D8D8", "stroke": "#7A7A7A"},
+  "edge": {"primary": "#3F3F3F", "auxiliary": "#777777", "feedback": "#555555"},
+  "opacity": {"node": 0.24, "core": 0.34, "group": 0.08, "stroke": 0.96, "edge_primary": 0.96, "edge_auxiliary": 0.65}
+}

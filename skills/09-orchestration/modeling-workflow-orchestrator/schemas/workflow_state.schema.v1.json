@@ -1,0 +1,11 @@
+﻿{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"workflow_state.v1","type":"object",
+"required":["workflow_id","current_stage","completed_stages","active_artifacts","invalidated_artifacts","revision_history","revision_count","current_verdict","required_action","release_scope","error_state","resume_stage","selection_authorized","timestamp"],
+"properties":{
+"workflow_id":{"type":"string"},"current_stage":{"enum":["START","PROBLEM_ANALYSIS","DATA_ASSESSMENT","MODEL_SELECTION","FORMULATION","NUMERICAL_EXECUTION","VALIDATION","REVISION","FINALIZE","FINALIZE_LIMITED","FAILED_BLOCKED","STOPPED_INTEGRITY","TERMINAL_REVIEW_REQUIRED"]},
+"completed_stages":{"type":"array"},
+"active_artifacts":{"type":"object","additionalProperties":{"type":"object","properties":{"path":{"type":"string"},"sha256":{"type":"string"}},"required":["path","sha256"]}},
+"invalidated_artifacts":{"type":"array"},"revision_history":{"type":"array"},"revision_count":{"type":"integer","minimum":0},
+"current_verdict":{"enum":[null,"PASS","PASS_WITH_LIMITATIONS","REVISE","FAIL"]},
+"required_action":{"type":["string","null"]},"release_scope":{"type":["string","null"]},
+"error_state":{"type":["object","null"]},"resume_stage":{"type":["string","null"]},
+"selection_authorized":{"type":"boolean"},"timestamp":{"type":"string"}}}

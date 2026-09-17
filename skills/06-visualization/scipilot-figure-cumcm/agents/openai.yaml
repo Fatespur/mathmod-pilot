@@ -1,0 +1,4 @@
+interface:
+  display_name: "国赛数据可视化"
+  short_description: "用于为数学建模竞赛生成论文级数据图、多面板图与候选图"
+  default_prompt: "Use $scipilot-figure-cumcm to create publication-ready competition figures from these results."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "MATLAB 建模绘图"
+  short_description: "用于生成并导出 MATLAB 专属的竞赛论文三维图与系统图表"
+  default_prompt: "Use $matlab-figure to create and export the required MATLAB competition figure."

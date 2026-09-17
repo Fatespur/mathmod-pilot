@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/schemas/model_validation_gate.schema.v2.json",
+  "title": "Model Validation Gate v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "gate", "problem_id", "model_id", "artifact_hashes", "validation_plan_hash", "checks", "identifiability_observability", "verdict", "blocking_failures", "limitations", "claim_restrictions", "required_action", "owner_stage", "revision_sequence", "revision_token", "revalidation_required", "validator_version", "created_at"],
+  "properties": {
+    "schema_version": {"const": "model_validation_gate.schema.v2"},
+    "gate": {"const": "MODEL_VALIDATION_GATE"},
+    "problem_id": {"type": "string", "minLength": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "artifact_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "data", "candidate_portfolio", "selection_verdict", "validation_plan", "evidence_bundle", "failure_envelope"],
+      "properties": {
+        "model": {"$ref": "#/$defs/hash"}, "data": {"$ref": "#/$defs/hash"},
+        "candidate_portfolio": {"$ref": "#/$defs/hash"}, "selection_verdict": {"$ref": "#/$defs/hash"},
+        "validation_plan": {"$ref": "#/$defs/hash"}, "evidence_bundle": {"$ref": "#/$defs/hash"},
+        "failure_envelope": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "validation_plan_hash": {"$ref": "#/$defs/hash"},
+    "checks": {"type": "array", "minItems": 11, "maxItems": 11, "items": {"$ref": "#/$defs/check"}},
+    "identifiability_observability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["applicable", "purpose", "status", "methods", "evidence_ids", "rationale", "claim_restrictions"],
+      "properties": {
+        "applicable": {"type": "boolean"},
+        "purpose": {"enum": ["PREDICTION_ONLY", "PARAMETER_INFERENCE", "STATE_RECONSTRUCTION", "MECHANISM_INTERPRETATION", "NOT_APPLICABLE"]},
+        "status": {"enum": ["PASS", "WARN", "FAIL", "NA"]},
+        "methods": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "rationale": {"type": "string", "minLength": 20},
+        "claim_restrictions": {"type": "array", "items": {"type": "string", "minLength": 10}}
+      }
+    },
+    "verdict": {"enum": ["PASS", "PASS_WITH_LIMITATIONS", "REVISE", "FAIL"]},
+    "blocking_failures": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "claim_restrictions": {"type": "array", "items": {"type": "string"}},
+    "required_action": {"enum": ["NONE", "REVISE_FORMULATION", "REVISE_DATA", "SIMPLIFY_MODEL", "CHANGE_MODEL", "REJECT_MODEL", "COLLECT_MORE_DATA", "RERUN_SOLVER", "RERUN_VALIDATION"]},
+    "owner_stage": {"enum": ["PROBLEM_FORMULATION", "DATA_PROCESSING", "MODEL_SELECTION", "SOLVER", "MODEL_VALIDATION"]},
+    "revision_sequence": {"type": "integer", "minimum": 1},
+    "revision_token": {"type": ["string", "null"]},
+    "revalidation_required": {"type": "boolean"},
+    "validator_version": {"const": "R2_VALIDATOR.v1"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "checkId": {"enum": ["V01_MATHEMATICAL_CORRECTNESS", "V02_DATA_COMPATIBILITY", "V03_BASELINE_SUPERIORITY", "V04_OUT_OF_SAMPLE_VALIDITY", "V05_SENSITIVITY", "V06_ROBUSTNESS", "V07_UNCERTAINTY", "V08_INTERPRETABILITY_DOMAIN_SENSE", "V09_CONSTRAINT_SATISFACTION", "V10_FAILURE_ENVELOPE", "V11_STABILITY_ABLATION"]},
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["check_id", "applicable", "status", "evidence_ids", "rationale", "blocking", "severity", "failure_class"],
+      "properties": {
+        "check_id": {"$ref": "#/$defs/checkId"}, "applicable": {"type": "boolean"},
+        "status": {"enum": ["PASS", "WARN", "FAIL", "NA"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "rationale": {"type": "string", "minLength": 20}, "blocking": {"type": "boolean"},
+        "severity": {"enum": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+        "failure_class": {"enum": ["NONE", "CORRECTABLE", "STRUCTURAL"]}
+      }
+    }
+  }
+}

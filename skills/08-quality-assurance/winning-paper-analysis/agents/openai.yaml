@@ -1,0 +1,4 @@
+interface:
+  display_name: "获奖论文分析"
+  short_description: "用于提炼优秀论文的结构、证据组织、篇幅与表达观察"
+  default_prompt: "Use $winning-paper-analysis to benchmark this section against winning-paper patterns."
