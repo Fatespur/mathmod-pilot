@@ -76,7 +76,7 @@ flowchart LR
 ### 1. 环境克隆与安装
 ```bash
 git clone https://github.com/Fatespur/mathmod-pilot
-cd cumcm-modeling-skills
+cd mathmod-pilot
 pip install -r requirements.txt
 ```
 
@@ -87,13 +87,25 @@ pip install -r requirements.txt
 任务目标: 对给定赛题进行形式化数学拆解，输出 variables_and_units.json 与 hard_assertions.json
 ```
 
-### 3. 运行交互式可视化官网
-```bash
-cd site
-npm install
-npm run dev
-```
-在浏览器中打开 `http://localhost:5173` 即可查看兼具美感与功能性的现代学术官网。
+### 3. 运行与查看交互式可视化官网
+
+本项目提供三种便捷访问可视化官网的方式：
+
+- **方式一：离线直接双击打开（极简零依赖）**
+  直接双击根目录下的 **`index.html`** 或运行 **`启动可视化网站.bat`**（英文系统可运行 `start_preview.bat`）。官网已完成全内联打包，无需安装 Node.js、Python 或任何依赖，双击即可在浏览器中秒开。
+- **方式二：轻量本地 HTTP Web 服务（推荐）**
+  在仓库根目录执行：
+  ```bash
+  python -m http.server 8080
+  ```
+  在浏览器中打开 `http://127.0.0.1:8080` 即可访问。
+- **方式三：源码开发调试模式（Vite + React）**
+  ```bash
+  cd site
+  npm install
+  npm run dev
+  ```
+  在浏览器中打开 `http://localhost:5173` 即可进行前端二次开发与热更新预览。
 
 ---
 

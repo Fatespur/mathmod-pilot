@@ -78,7 +78,7 @@ flowchart LR
 ```bash
 # Clone the repository
 git clone https://github.com/Fatespur/mathmod-pilot
-cd cumcm-modeling-skills
+cd mathmod-pilot
 
 # Install dependencies
 pip install -r requirements.txt
@@ -92,12 +92,24 @@ Task: Decompose the competition problem, extract entities, variables, and constr
 ```
 
 ### 3. Exploring the Interactive Website
-```bash
-cd site
-npm install
-npm run dev
-```
-Open `http://localhost:5173` to explore the interactive workflow, skill cards, and architecture DAG.
+
+We provide three easy ways to view and interact with the visual portal:
+
+- **Method 1: Direct Offline Double-Click (Zero Dependencies)**  
+  Double-click **`index.html`** in the repository root, or run **`start_preview.bat`** (or `启动可视化网站.bat`). The website is pre-bundled into a fully inlined standalone single-file format that opens directly in your browser without Node.js or Python.
+- **Method 2: Lightweight Local HTTP Web Server (Recommended)**  
+  Run in the repository root:
+  ```bash
+  python -m http.server 8080
+  ```
+  Then open `http://127.0.0.1:8080` in your browser.
+- **Method 3: Vite Dev Server for Source Development**  
+  ```bash
+  cd site
+  npm install
+  npm run dev
+  ```
+  Then open `http://localhost:5173` for hot module reloading and customization.
 
 ---
 
@@ -118,7 +130,10 @@ cumcm-modeling-skills/
 ├── docs/                       # Architecture, Workflow, and Audit Reports
 ├── registry/                   # Machine-Readable Metadata (skills.json, workflow.json)
 ├── examples/                   # Generic Walkthrough Examples
-├── site/                       # Modern Interactive Visualization Website (Vite+React)
+├── site/                       # Modern Interactive Visualization Website (Vite+React Source)
+├── index.html                  # Standalone Offline Visualization Portal (Zero Config)
+├── 启动可视化网站.bat           # 1-Click Windows Launcher (Chinese)
+├── start_preview.bat           # 1-Click Windows Launcher (English)
 ├── pyproject.toml              # Python Package Configuration
 └── requirements.txt            # Minimal Dependencies
 ```
